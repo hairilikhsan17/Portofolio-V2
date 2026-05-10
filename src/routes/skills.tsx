@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { Code2, Server, Database, Cloud, Wrench, Palette, Zap, Sparkles, ShieldCheck, Send, Rocket, Heart, Trophy, Brain } from "lucide-react";
 import {
   SiReact, SiNextdotjs, SiTypescript, SiTailwindcss, SiLaravel, SiNodedotjs, SiPython, SiExpress,
-  SiMysql, SiPostgresql, SiMongodb, SiOracle, SiAmazon, SiDocker, SiFirebase,
+  SiMysql, SiPostgresql, SiMongodb, SiOracle as _Oracle, SiAmazonwebservices, SiDocker, SiFirebase,
   SiGit, SiGithubactions, SiVite, SiPostman, SiFigma, SiFramer, SiVercel, SiGithub,
 } from "react-icons/si";
 import { Section } from "./index";
