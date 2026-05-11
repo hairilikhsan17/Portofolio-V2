@@ -154,18 +154,4 @@
   }
 }
 
-/* ─── GitHub Calendar — force full width ──────────────────────── */
-.github-calendar-fullwidth {
-  width: 100%;
-  overflow-x: auto;
-}
-.github-calendar-fullwidth > * {
-  width: 100% !important;
-}
-.github-calendar-fullwidth svg {
-  width: 100% !important;
-  height: auto !important;
-}
-.github-calendar-fullwidth text {
-  font-size: 12px !important;
-}
+

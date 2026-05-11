@@ -204,14 +204,26 @@ function MobileNavLink({
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
         className="relative flex items-center px-4 py-3 rounded-xl text-sm font-medium overflow-hidden"
+        style={{
+          border: active
+            ? `1px solid ${color}50`
+            : "1px solid transparent",
+          transition: "border 0.2s ease",
+        }}
       >
-        {/* Background fill — ONLY on hover, never on active alone */}
+        {/* Background fill — aktif ATAU hover */}
         <motion.span
           className="absolute inset-0 rounded-xl pointer-events-none"
-          animate={hovered ? { opacity: 1, scaleX: 1 } : { opacity: 0, scaleX: 0.85 }}
+          animate={
+            active
+              ? { opacity: 1, scaleX: 1 }
+              : hovered
+              ? { opacity: 0.7, scaleX: 1 }
+              : { opacity: 0, scaleX: 0.85 }
+          }
           transition={{ duration: 0.2, ease: "easeOut" }}
           style={{
-            background: `linear-gradient(90deg, ${color}22, ${color2}15)`,
+            background: `linear-gradient(90deg, ${color}30, ${color2}20)`,
             transformOrigin: "left",
           }}
         />

@@ -8,7 +8,8 @@ import {
   SiReact, SiNextdotjs, SiLaravel, SiPython, SiDocker, SiTypescript,
 } from "react-icons/si";
 import { FaAws } from "react-icons/fa";
-import { GitHubCalendar } from "react-github-calendar";
+import { GithubContributions } from "../components/GithubContributions";
+import { useIsMobile } from "../hooks/use-mobile";
 import profile from "../assets/profile.jpg";
 
 export const Route = createFileRoute("/")({
@@ -355,12 +356,6 @@ const socials = [
   { Icon: Instagram,label: "Instagram", color: "#E4405F", href: "#" },
 ];
 
-/* ─── GitHub green theme (classic) ──────────────────────────── */
-const githubGreenTheme = {
-  dark: ["#161b22", "#0e4429", "#006d32", "#26a641", "#39d353"],
-  light: ["#ebedf0", "#9be9a8", "#40c463", "#30a14e", "#216e39"],
-};
-
 /* ─── Featured Project Card — per-project accent color on hover ── */
 function FeaturedProjectCard({ p, i }: { p: typeof featured[number]; i: number }) {
   const [hovered, setHovered] = useState(false);
@@ -515,38 +510,6 @@ function CyclingText({ children, className, style }: {
   );
 }
 
-/* ─── Hook: fetch total contributions from GitHub API ────────── */
-function useGitHubContributions(username: string) {
-  const [count, setCount] = useState<number | null>(null);
-
-  useEffect(() => {
-    // GitHub GraphQL requires auth token — use REST contributions-calendar workaround
-    // We parse the public contributions page via the activity API
-    fetch(`https://github-contributions-api.jogruber.de/v4/${username}?y=last`)
-      .then(r => r.json())
-      .then((data: { total?: Record<string, number> }) => {
-        if (data?.total) {
-          const total = Object.values(data.total).reduce((a, b) => a + b, 0);
-          setCount(total);
-        }
-      })
-      .catch(() => {
-        // Fallback: try alternative API
-        fetch(`https://github-contributions-api.jogruber.de/v4/${username}`)
-          .then(r => r.json())
-          .then((data: { total?: Record<string, number> }) => {
-            if (data?.total) {
-              const years = Object.keys(data.total).map(Number).sort((a, b) => b - a);
-              if (years.length > 0) setCount(data.total[years[0]]);
-            }
-          })
-          .catch(() => setCount(null));
-      });
-  }, [username]);
-
-  return count;
-}
-
 /* ─── Stat Button with wiggle + ripple ──────────────────────── */
 function StatButton({ label, value, color, href }: {
   label: string; value: string; color: string; href?: string;
@@ -607,7 +570,8 @@ function StatButton({ label, value, color, href }: {
             ? `0 0 0 1px ${color}30, 0 8px 28px -6px ${color}60`
             : "none",
           transition: "background 0.25s ease, border 0.25s ease, box-shadow 0.25s ease",
-          minWidth: 110,
+          minWidth: 0,
+          width: "100%",
         }}
       >
         {/* Shimmer sweep */}
@@ -734,113 +698,30 @@ function LearnMoreButton() {
   );
 }
 function GitHubStatsCard() {
-  const [hovered, setHovered] = useState(false);
-  const contributions = useGitHubContributions("hairilikhsan17");
-  const contribLabel = contributions !== null
-    ? `${contributions.toLocaleString()} contributions in the last year`
-    : "Loading contributions…";
-
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 30, scale: 0.98 }}
-      whileInView={{ opacity: 1, y: 0, scale: 1 }}
-      viewport={{ once: true }}
-      transition={{ type: "spring", stiffness: 80 }}
-      onHoverStart={() => setHovered(true)}
-      onHoverEnd={() => setHovered(false)}
-      whileHover={{
-        boxShadow: "0 0 0 1px rgba(57,211,83,0.5), 0 12px 50px -10px rgba(57,211,83,0.35), 0 0 80px -30px rgba(34,211,238,0.25)",
-      }}
-      className="rounded-2xl p-6 md:p-8 overflow-hidden relative"
-      style={{
-        background: "rgba(13,17,23,0.85)",
-        border: "1px solid rgba(48,54,61,0.8)",
-        backdropFilter: "blur(12px)",
-        transition: "box-shadow 0.35s ease",
-      }}
-    >
-      {/* Animated scan line on hover */}
-      <AnimatePresence>
-        {hovered && (
-          <motion.div
-            className="absolute inset-x-0 pointer-events-none"
-            style={{
-              height: 2,
-              background: "linear-gradient(to right, transparent, rgba(57,211,83,0.6), rgba(34,211,238,0.5), transparent)",
-              zIndex: 10,
-            }}
-            initial={{ top: "0%", opacity: 0 }}
-            animate={{ top: "100%", opacity: [0, 1, 1, 0] }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 1.8, ease: "linear", repeat: Infinity }}
-          />
-        )}
-      </AnimatePresence>
+    <div>
+      {/* Calendar + badge contributions — semua dari GithubContributions */}
+      <GithubContributions />
 
-      {/* Background glow on hover */}
+      {/* Stats row — 2 kolom di mobile (Repo + Streak), GitHub full width di bawah */}
       <motion.div
-        className="absolute inset-0 pointer-events-none rounded-2xl"
-        animate={{ opacity: hovered ? 1 : 0 }}
-        transition={{ duration: 0.4 }}
-        style={{
-          background: "radial-gradient(ellipse 70% 60% at 50% 50%, rgba(57,211,83,0.06), transparent 80%)",
-        }}
-      />
-
-      {/* Top-right: contributions count */}
-      <div className="relative z-10 flex justify-end mb-3">
-        <motion.div
-          initial={{ opacity: 0, x: 20 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.3, type: "spring", stiffness: 200 }}
-          className="flex items-center gap-2 px-3 py-1.5 rounded-full"
-          style={{
-            background: "rgba(57,211,83,0.1)",
-            border: "1px solid rgba(57,211,83,0.3)",
-          }}
-        >
-          <motion.span
-            className="w-2 h-2 rounded-full"
-            style={{ background: "#39d353" }}
-            animate={{ opacity: [1, 0.3, 1], scale: [1, 0.8, 1] }}
-            transition={{ duration: 1.5, repeat: Infinity }}
-          />
-          <CyclingText className="text-xs font-semibold">
-            {contribLabel}
-          </CyclingText>
-        </motion.div>
-      </div>
-
-      {/* Calendar — full width via CSS override */}
-      <div className="github-calendar-fullwidth relative z-10">
-        <GitHubCalendar
-          username="hairilikhsan17"
-          theme={githubGreenTheme}
-          colorScheme="dark"
-          year={2026}
-          blockSize={14}
-          blockMargin={4}
-          showWeekdayLabels
-          fontSize={14}
-          style={{ color: "rgba(200,200,235,0.8)" }}
-        />
-      </div>
-
-      {/* Stats row — now as animated buttons */}
-      <motion.div
-        className="relative z-10 flex flex-wrap gap-3 mt-5 pt-5"
-        style={{ borderTop: "1px solid rgba(255,255,255,0.07)" }}
+        className="mt-4 space-y-2 sm:space-y-0 sm:flex sm:flex-wrap sm:gap-3"
         initial={{ opacity: 0, y: 10 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ delay: 0.3 }}
       >
-        <StatButton label="Repositories"  value="38"            color="#39d353" />
-        <StatButton label="Active Streak" value="42 days"       color="#60a5fa" />
-        <StatButton label="GitHub"        value="@hairilikhsan17" color="#a78bfa" href="https://github.com/hairilikhsan17" />
+        {/* Baris 1: Repositories + Active Streak */}
+        <div className="grid grid-cols-2 gap-2 sm:contents">
+          <StatButton label="Repositories"  value="38"        color="#39d353" />
+          <StatButton label="Active Streak" value="42 days"   color="#60a5fa" />
+        </div>
+        {/* Baris 2: GitHub — full width di mobile */}
+        <div className="sm:contents">
+          <StatButton label="GitHub" value="@hairilikhsan17" color="#a78bfa" href="https://github.com/hairilikhsan17" />
+        </div>
       </motion.div>
-    </motion.div>
+    </div>
   );
 }
 
@@ -848,21 +729,22 @@ function GitHubStatsCard() {
 function HomePage() {
   const heroRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
-  const yParallax = useTransform(scrollYProgress, [0, 1], [0, -120]);
-  const typedText = useTypingEffect(TYPING_PHRASES);
+  const yParallax  = useTransform(scrollYProgress, [0, 1], [0, -120]);
+  const typedText  = useTypingEffect(TYPING_PHRASES);
+  const isMobile   = useIsMobile();
 
   return (
-    <div className="px-4">
+    <div className="px-4 overflow-x-hidden">
       <style>{HOME_STYLE}</style>
 
       {/* ══ HERO ══════════════════════════════════════════════════ */}
       <section
         ref={heroRef}
-        className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-8 lg:gap-12 items-center min-h-[88vh] py-20"
+        className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-8 lg:gap-12 items-center min-h-[88vh] py-20 overflow-x-hidden"
       >
         {/* ── Photo side — top on mobile, left on desktop ── */}
         <motion.div
-          style={{ y: yParallax }}
+          style={{ y: yParallax, overflow: "visible" }}
           className="relative h-[420px] lg:h-[500px] order-1 lg:order-1 flex items-center justify-center"
         >
           {/* Ambient glow */}
@@ -905,47 +787,53 @@ function HomePage() {
             </motion.div>
           </ParticleBurst>
 
-          {/* Floating tech icons */}
-          {techIcons.map(({ Logo, name, color, x, y, delay, floatDur }, i) => (
-            <motion.div
-              key={name}
-              initial={{ opacity: 0, x: 0, y: 0, scale: 0.3, filter: "blur(16px)" }}
-              animate={{ opacity: 1, x, y, scale: 1, filter: "blur(0px)" }}
-              transition={{ delay, duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-              className="absolute z-20"
-            >
-              <ParticleBurst count={6} radius={22} className="inline-flex">
-                <motion.div
-                  animate={{ y: [0, -9, 0] }}
-                  transition={{ duration: floatDur, repeat: Infinity, ease: "easeInOut" }}
-                  whileHover={{ scale: 1.2, rotate: [0, -8, 8, 0] }}
-                  className="glass-strong rounded-2xl px-3 py-2 flex items-center gap-2 text-xs font-semibold cursor-pointer"
-                  style={{
-                    boxShadow: `0 8px 30px -10px ${color}80`,
-                    border: `1px solid ${color}30`,
-                  }}
-                >
-                  {/* Icon color cycles through gradient palette staggered by index */}
-                  <motion.span
-                    animate={{
-                      color: [color, "#a78bfa", "#22d3ee", "#f472b6", color],
+          {/* Floating tech icons — keluar dari bingkai foto */}
+          {techIcons.map(({ Logo, name, color, x, y, delay, floatDur }, i) => {
+            // Mobile: posisi 65% dari desktop, icon lebih besar dari sebelumnya
+            const scale = isMobile ? 0.65 : 1;
+            const mx    = x * scale;
+            const my    = y * scale;
+            return (
+              <motion.div
+                key={name}
+                initial={{ opacity: 0, x: 0, y: 0, scale: 0.3, filter: "blur(16px)" }}
+                animate={{ opacity: 1, x: mx, y: my, scale: 1, filter: "blur(0px)" }}
+                transition={{ delay, duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+                className="absolute z-20"
+              >
+                <ParticleBurst count={6} radius={22} className="inline-flex">
+                  <motion.div
+                    animate={{ y: [0, -9, 0] }}
+                    transition={{ duration: floatDur, repeat: Infinity, ease: "easeInOut" }}
+                    whileHover={{ scale: 1.2, rotate: [0, -8, 8, 0] }}
+                    className="glass-strong rounded-2xl flex items-center gap-2 font-semibold cursor-pointer"
+                    style={{
+                      boxShadow: `0 8px 30px -10px ${color}80`,
+                      border:    `1px solid ${color}40`,
+                      padding:   isMobile ? "7px 10px" : "8px 12px",
+                      fontSize:  isMobile ? 11 : 12,
                     }}
-                    transition={{ duration: 6 + i * 0.7, repeat: Infinity, ease: "linear" }}
                   >
-                    <Logo size={16} />
-                  </motion.span>
-                  <motion.span
-                    animate={{
-                      color: [color, "#a78bfa", "#22d3ee", "#f472b6", color],
-                    }}
-                    transition={{ duration: 6 + i * 0.7, repeat: Infinity, ease: "linear" }}
-                  >
-                    {name}
-                  </motion.span>
-                </motion.div>
-              </ParticleBurst>
-            </motion.div>
-          ))}
+                    <motion.span
+                      animate={{ color: [color, "#a78bfa", "#22d3ee", "#f472b6", color] }}
+                      transition={{ duration: 6 + i * 0.7, repeat: Infinity, ease: "linear" }}
+                    >
+                      <Logo size={isMobile ? 16 : 16} />
+                    </motion.span>
+                    {/* Label teks — sembunyikan di mobile */}
+                    {!isMobile && (
+                      <motion.span
+                        animate={{ color: [color, "#a78bfa", "#22d3ee", "#f472b6", color] }}
+                        transition={{ duration: 6 + i * 0.7, repeat: Infinity, ease: "linear" }}
+                      >
+                        {name}
+                      </motion.span>
+                    )}
+                  </motion.div>
+                </ParticleBurst>
+              </motion.div>
+            );
+          })}
         </motion.div>
 
         {/* ── Text content — bottom on mobile, right on desktop ── */}

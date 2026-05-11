@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { motion, AnimatePresence, useInView, useMotionValue, useSpring, type Variants } from "framer-motion";
 import { useState, useRef, useEffect } from "react";
-import { Award, X, ExternalLink, Download, ChevronLeft, ChevronRight } from "lucide-react";
+import { Award, X, ExternalLink, Download, ChevronLeft, ChevronRight, BadgeCheck, Copy, Check, CalendarDays } from "lucide-react";
 
 export const Route = createFileRoute("/certificates")({
   head: () => ({
@@ -100,16 +100,16 @@ function Section({ title, badge, subtitle, children }: { title: string; badge: s
 }
 
 const certs = [
-  { title: "Microsoft Azure AI Foundry", issuer: "Microsoft", year: "2026", cat: "Cloud", featured: true },
-  { title: "Junior Web Developer", issuer: "BNSP", year: "2025", cat: "Web Development" },
-  { title: "Junior Network Administrator", issuer: "BNSP", year: "2025", cat: "Networking" },
-  { title: "AI Talent Development Nation", issuer: "Kominfo", year: "2025", cat: "AI & Data" },
-  { title: "Dicoding AI Engineer Entry", issuer: "Dicoding", year: "2025", cat: "AI & Data" },
-  { title: "IBM Granite", issuer: "IBM", year: "2026", cat: "AI & Data" },
-  { title: "Pemrograman Python", issuer: "Dicoding", year: "2024", cat: "Programming" },
-  { title: "Pemateri Cyber Security", issuer: "UNDIPA", year: "2025", cat: "Cyber Security" },
-  { title: "Hackathon BIKN", issuer: "BIKN", year: "2025", cat: "Workshop" },
-  { title: "Asisten Dosen", issuer: "UNDIPA", year: "2024", cat: "Workshop" },
+  { title: "Microsoft Azure AI Foundry", issuer: "Microsoft", year: "2026", cat: "Cloud", featured: true, credentialId: "0LZ0Y33E3X65", skills: ["Azure", "AI", "Cloud", "Machine Learning"] },
+  { title: "Junior Web Developer", issuer: "BNSP", year: "2025", cat: "Web Development", credentialId: "", skills: ["Laravel", "MySQL", "HTML", "CSS", "JavaScript"] },
+  { title: "Junior Network Administrator", issuer: "BNSP", year: "2025", cat: "Networking", credentialId: "", skills: ["Cisco", "TCP/IP", "Routing"] },
+  { title: "AI Talent Development Nation", issuer: "Kominfo", year: "2025", cat: "AI & Data", credentialId: "", skills: ["Python", "Machine Learning", "Deep Learning"] },
+  { title: "Dicoding AI Engineer Entry", issuer: "Dicoding", year: "2025", cat: "AI & Data", credentialId: "", skills: ["TensorFlow", "Python", "Neural Networks"] },
+  { title: "IBM Granite", issuer: "IBM", year: "2026", cat: "AI & Data", credentialId: "", skills: ["IBM Watson", "Generative AI", "LLM"] },
+  { title: "Pemrograman Python", issuer: "Dicoding", year: "2024", cat: "Programming", credentialId: "", skills: ["Python", "OOP", "Data Structures"] },
+  { title: "Pemateri Cyber Security", issuer: "UNDIPA", year: "2025", cat: "Cyber Security", credentialId: "", skills: ["Ethical Hacking", "Network Security", "OWASP"] },
+  { title: "Hackathon BIKN", issuer: "BIKN", year: "2025", cat: "Workshop", credentialId: "", skills: ["Problem Solving", "Teamwork", "Innovation"] },
+  { title: "Asisten Dosen", issuer: "UNDIPA", year: "2024", cat: "Workshop", credentialId: "", skills: ["Teaching", "Research", "Mentoring"] },
 ];
 
 const cats = ["All", "Web Development", "Cloud", "AI & Data", "Cyber Security", "Networking", "Programming", "Workshop"];
@@ -176,7 +176,7 @@ function CredentialsSlider() {
 
   return (
     <div className="max-w-6xl mx-auto mt-4">
-      <div className="relative overflow-hidden rounded-3xl glass-strong glow p-1">
+      <div className="relative rounded-3xl glass-strong glow p-1">
         <AnimatePresence custom={dir} mode="wait">
           <motion.div
             key={cert.title}
@@ -200,7 +200,7 @@ function CredentialsSlider() {
                 transition={{ duration: 2.5, repeat: Infinity, ease: "linear", repeatDelay: 1 }}
                 className="absolute inset-0 w-1/3 bg-white/20 skew-x-12 blur-sm"
               />
-              <Award className="text-white drop-shadow-lg" size={64} />
+              <BadgeCheck className="text-white drop-shadow-lg" size={64} strokeWidth={1.5} />
             </motion.div>
             <div className="flex flex-col justify-center">
               <span className="pill w-fit">⭐ Featured</span>
@@ -217,34 +217,39 @@ function CredentialsSlider() {
             </div>
           </motion.div>
         </AnimatePresence>
+      </div>
 
-        {/* Nav arrows */}
+      {/* Nav arrows + indicators — di BAWAH form */}
+      <div className="flex items-center justify-between mt-4 px-1">
+        {/* Prev button */}
         <button
           onClick={() => go(-1)}
-          className="absolute left-3 top-1/2 -translate-y-1/2 p-2 rounded-full glass hover:glow-sm transition z-10"
+          className="p-2.5 rounded-full glass hover:glow-sm transition"
         >
           <ChevronLeft size={18} />
         </button>
+
+        {/* Dot indicators */}
+        <div className="flex gap-2">
+          {featuredCerts.map((_, i) => (
+            <motion.button
+              key={i}
+              onClick={() => { setDir(i > idx ? 1 : -1); setIdx(i); }}
+              animate={{ width: i === idx ? 28 : 8, opacity: i === idx ? 1 : 0.4 }}
+              transition={{ type: "spring", stiffness: 400, damping: 25 }}
+              className="h-2 rounded-full"
+              style={{ background: i === idx ? "var(--neon)" : "var(--muted-foreground)" }}
+            />
+          ))}
+        </div>
+
+        {/* Next button */}
         <button
           onClick={() => go(1)}
-          className="absolute right-3 top-1/2 -translate-y-1/2 p-2 rounded-full glass hover:glow-sm transition z-10"
+          className="p-2.5 rounded-full glass hover:glow-sm transition"
         >
           <ChevronRight size={18} />
         </button>
-      </div>
-
-      {/* Slider indicators */}
-      <div className="flex justify-center gap-2 mt-4">
-        {featuredCerts.map((_, i) => (
-          <motion.button
-            key={i}
-            onClick={() => { setDir(i > idx ? 1 : -1); setIdx(i); }}
-            animate={{ width: i === idx ? 28 : 8, opacity: i === idx ? 1 : 0.4 }}
-            transition={{ type: "spring", stiffness: 400, damping: 25 }}
-            className="h-2 rounded-full"
-            style={{ background: i === idx ? "var(--neon)" : "var(--muted-foreground)" }}
-          />
-        ))}
       </div>
     </div>
   );
@@ -308,7 +313,7 @@ function CertCard({ c, onClick, i }: { c: typeof certs[number]; onClick: () => v
           className="absolute inset-0 w-1/3 bg-white/15 skew-x-12 blur-sm"
         />
         <motion.div animate={hovered ? { rotate: 360, scale: 1.15 } : { rotate: 0, scale: 1 }} transition={{ duration: 0.5 }}>
-          <Award className="text-white/80" size={36} />
+          <BadgeCheck className="text-white/80" size={36} strokeWidth={1.5} />
         </motion.div>
       </div>
 
@@ -317,6 +322,55 @@ function CertCard({ c, onClick, i }: { c: typeof certs[number]; onClick: () => v
       <p className="text-xs text-muted-foreground mt-1 relative z-10">
         {c.issuer} · {c.year}
       </p>
+
+      {/* Skills preview — max 2 + overflow badge */}
+      <div className="flex flex-wrap gap-1.5 mt-2 relative z-10">
+        {c.skills.slice(0, 2).map((s) => (
+          <span
+            key={s}
+            className="text-[10px] px-2 py-0.5 rounded-full font-medium"
+            style={{
+              background: "color-mix(in oklab, var(--neon) 12%, transparent)",
+              border: "1px solid color-mix(in oklab, var(--neon) 28%, transparent)",
+              color: "color-mix(in oklab, var(--neon) 90%, white)",
+            }}
+          >
+            {s}
+          </span>
+        ))}
+        {c.skills.length > 2 && (
+          <span
+            className="text-[10px] px-2 py-0.5 rounded-full font-semibold"
+            style={{
+              background: "color-mix(in oklab, var(--neon-2) 15%, transparent)",
+              border: "1px solid color-mix(in oklab, var(--neon-2) 30%, transparent)",
+              color: "color-mix(in oklab, var(--neon-2) 90%, white)",
+            }}
+          >
+            +{c.skills.length - 2}
+          </span>
+        )}
+      </div>
+
+      {/* View Details button */}
+      <motion.button
+        onClick={onClick}
+        whileHover={{ scale: 1.04 }}
+        whileTap={{ scale: 0.97 }}
+        className="mt-3 w-full relative z-10 flex items-center justify-center gap-1.5 py-1.5 rounded-xl text-xs font-semibold transition-all duration-200"
+        style={{
+          background: hovered
+            ? "linear-gradient(120deg, var(--neon), var(--neon-2))"
+            : "rgba(255,255,255,0.06)",
+          border: hovered
+            ? "1px solid transparent"
+            : "1px solid rgba(255,255,255,0.1)",
+          color: hovered ? "white" : "rgba(255,255,255,0.7)",
+        }}
+      >
+        <ExternalLink size={11} />
+        View Details
+      </motion.button>
 
       {/* Bottom glow line on hover */}
       <motion.div
@@ -471,6 +525,250 @@ function AchievementCard({ v, suffix, l, i }: { v: number; suffix: string; l: st
         style={{ background: "linear-gradient(90deg, var(--neon), var(--neon-2))" }}
       />
     </motion.div>
+  );
+}
+
+/* ── Credential ID Box — persis seperti gambar, klik untuk copy ── */
+function CredentialIdBox({ credentialId }: { credentialId: string }) {
+  const [copied, setCopied] = useState(false);
+  const [hovered, setHovered] = useState(false);
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(credentialId).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  };
+
+  return (
+    <motion.div
+      className="mt-3 rounded-xl relative overflow-hidden cursor-pointer"
+      style={{
+        background: hovered ? "rgba(255,255,255,0.07)" : "rgba(255,255,255,0.04)",
+        border: hovered
+          ? "1px solid rgba(167,139,250,0.35)"
+          : "1px solid rgba(255,255,255,0.07)",
+        transition: "background 0.25s ease, border 0.25s ease",
+      }}
+      onHoverStart={() => setHovered(true)}
+      onHoverEnd={() => setHovered(false)}
+      onClick={handleCopy}
+      whileHover={{ scale: 1.015 }}
+      whileTap={{ scale: 0.98 }}
+      title="Click to copy"
+    >
+      {/* Shimmer sweep on hover */}
+      <AnimatePresence>
+        {hovered && (
+          <motion.div
+            className="absolute inset-0 pointer-events-none"
+            initial={{ x: "-100%", opacity: 0 }}
+            animate={{ x: "200%", opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.55, ease: "easeInOut" }}
+            style={{
+              background: "linear-gradient(105deg, transparent 30%, rgba(167,139,250,0.15) 50%, transparent 70%)",
+            }}
+          />
+        )}
+      </AnimatePresence>
+
+      <div className="px-4 py-3 relative z-10">
+        {/* Label kecil di atas */}
+        <p className="text-xs text-muted-foreground mb-1">Credential ID</p>
+
+        {/* ID bold di bawah — font mono seperti gambar */}
+        <div className="flex items-center justify-between">
+          <motion.p
+            className="font-mono font-bold text-sm tracking-widest"
+            animate={{ color: hovered ? "#a78bfa" : "rgba(255,255,255,0.92)" }}
+            transition={{ duration: 0.2 }}
+          >
+            {credentialId}
+          </motion.p>
+
+          {/* Copy icon — muncul saat hover */}
+          <AnimatePresence>
+            {hovered && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.7 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.7 }}
+                transition={{ duration: 0.15 }}
+                className="ml-3 flex-shrink-0"
+              >
+                {copied
+                  ? <Check size={13} style={{ color: "#39d353" }} />
+                  : <Copy size={13} style={{ color: "rgba(167,139,250,0.7)" }} />
+                }
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+
+        {/* Copied feedback */}
+        <AnimatePresence>
+          {copied && (
+            <motion.p
+              initial={{ opacity: 0, y: 3 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+              className="text-xs mt-1"
+              style={{ color: "#39d353" }}
+            >
+              ✓ Copied!
+            </motion.p>
+          )}
+        </AnimatePresence>
+      </div>
+
+      {/* Bottom glow line on hover */}
+      <motion.div
+        animate={{ scaleX: hovered ? 1 : 0, opacity: hovered ? 1 : 0 }}
+        transition={{ duration: 0.3 }}
+        className="absolute bottom-0 left-0 right-0 h-px origin-left"
+        style={{ background: "linear-gradient(90deg, #a78bfa, #60a5fa, #22d3ee)" }}
+      />
+    </motion.div>
+  );
+}
+
+/* ── Skills Section — max 2 visible, +N overflow with expand popup ── */
+function SkillsSection({ skills, cat }: { skills: string[]; cat: string }) {
+  const [showAll, setShowAll] = useState(false);
+  const MAX_VISIBLE = 2;
+  const visible = skills.slice(0, MAX_VISIBLE);
+  const overflow = skills.slice(MAX_VISIBLE);
+
+  return (
+    <div className="mt-3 relative">
+      <p className="text-xs text-muted-foreground mb-2">Skills</p>
+      <div className="flex flex-wrap gap-2 items-center">
+        {/* Category pill — always first */}
+        <span
+          className="text-xs px-3 py-1 rounded-full font-semibold"
+          style={{
+            background: "linear-gradient(120deg, var(--neon), var(--neon-2))",
+            color: "white",
+            border: "none",
+          }}
+        >
+          {cat}
+        </span>
+
+        {/* First 2 skills */}
+        {visible.map((s) => (
+          <motion.span
+            key={s}
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="text-xs px-3 py-1 rounded-full font-medium"
+            style={{
+              background: "color-mix(in oklab, var(--neon) 12%, transparent)",
+              border: "1px solid color-mix(in oklab, var(--neon) 30%, transparent)",
+              color: "color-mix(in oklab, var(--neon) 90%, white)",
+            }}
+          >
+            {s}
+          </motion.span>
+        ))}
+
+        {/* +N overflow button */}
+        {overflow.length > 0 && (
+          <motion.button
+            whileHover={{ scale: 1.08 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => setShowAll(true)}
+            className="text-xs px-3 py-1 rounded-full font-bold cursor-pointer transition-all"
+            style={{
+              background: "linear-gradient(120deg, color-mix(in oklab, var(--neon-2) 25%, transparent), color-mix(in oklab, var(--neon) 25%, transparent))",
+              border: "1px solid color-mix(in oklab, var(--neon-2) 45%, transparent)",
+              color: "color-mix(in oklab, var(--neon-2) 95%, white)",
+            }}
+          >
+            +{overflow.length}
+          </motion.button>
+        )}
+      </div>
+
+      {/* All skills popup overlay */}
+      <AnimatePresence>
+        {showAll && (
+          <>
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-[200]"
+              onClick={() => setShowAll(false)}
+            />
+            {/* Popup */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.88, y: 8 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.88, y: 8 }}
+              transition={{ type: "spring", stiffness: 380, damping: 28 }}
+              className="absolute left-0 z-[201] mt-2 rounded-2xl p-4 min-w-[220px]"
+              style={{
+                background: "color-mix(in oklab, var(--card) 92%, transparent)",
+                backdropFilter: "blur(20px) saturate(160%)",
+                border: "1px solid color-mix(in oklab, var(--neon) 35%, transparent)",
+                boxShadow: "0 8px 32px -8px color-mix(in oklab, var(--neon) 50%, transparent), 0 0 0 1px color-mix(in oklab, var(--neon) 15%, transparent)",
+              }}
+            >
+              {/* Header */}
+              <div className="flex items-center justify-between mb-3">
+                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">All Skills</p>
+                <motion.button
+                  whileHover={{ scale: 1.15, rotate: 90 }}
+                  whileTap={{ scale: 0.9 }}
+                  onClick={() => setShowAll(false)}
+                  className="p-1 rounded-full hover:bg-secondary transition"
+                >
+                  <X size={12} />
+                </motion.button>
+              </div>
+
+              {/* All skills */}
+              <div className="flex flex-wrap gap-2">
+                <span
+                  className="text-xs px-3 py-1 rounded-full font-semibold"
+                  style={{
+                    background: "linear-gradient(120deg, var(--neon), var(--neon-2))",
+                    color: "white",
+                  }}
+                >
+                  {cat}
+                </span>
+                {skills.map((s, idx) => (
+                  <motion.span
+                    key={s}
+                    initial={{ opacity: 0, y: 6 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: idx * 0.04 }}
+                    className="text-xs px-3 py-1 rounded-full font-medium"
+                    style={{
+                      background: "color-mix(in oklab, var(--neon) 12%, transparent)",
+                      border: "1px solid color-mix(in oklab, var(--neon) 30%, transparent)",
+                      color: "color-mix(in oklab, var(--neon) 90%, white)",
+                    }}
+                  >
+                    {s}
+                  </motion.span>
+                ))}
+              </div>
+
+              {/* Bottom accent */}
+              <div
+                className="absolute bottom-0 left-0 right-0 h-px rounded-b-2xl"
+                style={{ background: "linear-gradient(90deg, var(--neon), var(--neon-2))" }}
+              />
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+    </div>
   );
 }
 
@@ -635,34 +933,20 @@ function CertificatesPage() {
               exit={{ scale: 0.85, y: 40, opacity: 0 }}
               transition={{ type: "spring", stiffness: 300, damping: 28 }}
               onClick={(e) => e.stopPropagation()}
-              className="glass-strong rounded-3xl p-6 md:p-8 max-w-2xl w-full glow relative overflow-hidden"
+              className="glass-strong rounded-3xl max-w-3xl w-full glow relative overflow-hidden max-h-[90vh] overflow-y-auto"
             >
               {/* Animated top accent line */}
               <div
-                className="absolute top-0 left-0 h-[2px] w-full"
+                className="absolute top-0 left-0 h-[2px] w-full z-10"
                 style={{ background: "linear-gradient(90deg, #a78bfa, #60a5fa, #22d3ee, #f472b6)" }}
               />
 
               {/* Close button */}
               <button
                 onClick={() => setOpen(null)}
-                className="absolute top-4 right-4 p-2 rounded-full hover:bg-secondary transition z-10"
+                className="absolute top-4 right-4 p-2 rounded-full hover:bg-secondary transition z-20"
               >
                 <X size={18} />
-              </button>
-
-              {/* Prev / Next arrows */}
-              <button
-                onClick={() => goModal(-1)}
-                className="absolute left-3 top-1/2 -translate-y-1/2 p-2 rounded-full glass hover:glow-sm transition z-10"
-              >
-                <ChevronLeft size={18} />
-              </button>
-              <button
-                onClick={() => goModal(1)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 p-2 rounded-full glass hover:glow-sm transition z-10"
-              >
-                <ChevronRight size={18} />
               </button>
 
               {/* Sliding cert content */}
@@ -675,59 +959,100 @@ function CertificatesPage() {
                   animate="center"
                   exit="exit"
                   transition={{ type: "spring", stiffness: 320, damping: 30 }}
+                  className="grid md:grid-cols-[1fr_1fr] gap-0"
                 >
-                  <motion.div
-                    whileHover={{ scale: 1.02 }}
-                    className="aspect-video rounded-2xl flex items-center justify-center mb-5 relative overflow-hidden"
-                    style={{ background: "linear-gradient(135deg, var(--neon), var(--neon-2))" }}
-                  >
+                  {/* Kiri: info */}
+                  <div className="p-6 md:p-8 flex flex-col justify-between">
+                    <div>
+                      <h3 className="text-2xl md:text-3xl font-bold leading-tight pr-8">{open.title}</h3>
+                      <p className="text-muted-foreground mt-2 text-sm">
+                        Issued by <span className="text-white font-semibold">{open.issuer}</span>
+                      </p>
+
+                      {/* Issued Date */}
+                      <div className="mt-4 rounded-xl p-3 flex items-center gap-3"
+                        style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.08)" }}>
+                        <motion.div
+                          animate={{ rotate: [0, -8, 8, 0] }}
+                          transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                          style={{ color: "var(--neon)" }}
+                        >
+                          <CalendarDays size={20} />
+                        </motion.div>
+                        <div>
+                          <p className="text-xs text-muted-foreground">Issued Date</p>
+                          <p className="font-semibold text-sm">{open.year}</p>
+                        </div>
+                      </div>
+
+                      {/* Credential ID — dengan copy button dan animasi */}
+                      {open.credentialId && (
+                        <CredentialIdBox credentialId={open.credentialId} />
+                      )}
+
+                      {/* Skills — max 2 visible + overflow popup */}
+                      <SkillsSection skills={open.skills} cat={open.cat} />
+                    </div>
+
+                    <div className="flex gap-2 mt-6">
+                      <a href="#" className="btn-ghost flex-1 justify-center text-sm">
+                        <Download size={13} /> Download
+                      </a>
+                      <a href="#" className="btn-primary flex-1 justify-center text-sm">
+                        Verify <ExternalLink size={13} />
+                      </a>
+                    </div>
+                  </div>
+
+                  {/* Kanan: gambar sertifikat */}
+                  <div className="p-4 md:p-6 flex items-center justify-center"
+                    style={{ background: "rgba(255,255,255,0.03)", borderLeft: "1px solid rgba(255,255,255,0.06)" }}>
                     <motion.div
-                      animate={{ x: ["-100%", "200%"] }}
-                      transition={{ duration: 2, repeat: Infinity, ease: "linear", repeatDelay: 0.5 }}
-                      className="absolute inset-0 w-1/3 bg-white/20 skew-x-12 blur-sm"
-                    />
-                    <Award className="text-white" size={64} />
-                  </motion.div>
-
-                  <span className="pill">{open.cat}</span>
-                  <h3 className="text-2xl font-bold mt-3">{open.title}</h3>
-                  <p className="text-muted-foreground mt-1">
-                    Issued by {open.issuer} · {open.year}
-                  </p>
-
-                  <div className="flex gap-3 mt-6">
-                    <a href="#" className="btn-ghost">
-                      <Download size={14} /> Download
-                    </a>
-                    <a href="#" className="btn-primary">
-                      Verify <ExternalLink size={14} />
-                    </a>
+                      whileHover={{ scale: 1.03 }}
+                      className="w-full aspect-[4/3] rounded-2xl flex items-center justify-center relative overflow-hidden"
+                      style={{ background: "linear-gradient(135deg, var(--neon), var(--neon-2))" }}
+                    >
+                      <motion.div
+                        animate={{ x: ["-100%", "200%"] }}
+                        transition={{ duration: 2, repeat: Infinity, ease: "linear", repeatDelay: 0.5 }}
+                        className="absolute inset-0 w-1/3 bg-white/20 skew-x-12 blur-sm"
+                      />
+                      {/* Icon keren — BadgeCheck */}
+                      <motion.div
+                        animate={{ rotate: [0, 5, -5, 0], scale: [1, 1.05, 1] }}
+                        transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                      >
+                        <BadgeCheck className="text-white drop-shadow-lg" size={72} strokeWidth={1.5} />
+                      </motion.div>
+                    </motion.div>
                   </div>
                 </motion.div>
               </AnimatePresence>
 
-              {/* ── Slider indicators ── */}
-              <div className="flex justify-center gap-2 mt-6 flex-wrap">
-                {certs.map((c, i) => (
-                  <motion.button
-                    key={c.title}
-                    onClick={() => { setModalDir(i > modalIdx ? 1 : -1); setModalIdx(i); setOpen(certs[i]); }}
-                    animate={{
-                      width: i === modalIdx ? 28 : 8,
-                      opacity: i === modalIdx ? 1 : 0.35,
-                      background: i === modalIdx ? "var(--neon)" : "var(--muted-foreground)",
-                    }}
-                    transition={{ type: "spring", stiffness: 400, damping: 25 }}
-                    className="h-2 rounded-full flex-shrink-0"
-                    title={c.title}
-                  />
-                ))}
-              </div>
+              {/* ── Nav arrows + counter di BAWAH — sejajar ── */}
+              <div className="flex items-center justify-between px-6 py-4"
+                style={{ borderTop: "1px solid rgba(255,255,255,0.07)" }}>
+                {/* Prev */}
+                <button
+                  onClick={() => goModal(-1)}
+                  className="p-2.5 rounded-full glass hover:glow-sm transition"
+                >
+                  <ChevronLeft size={16} />
+                </button>
 
-              {/* Counter label */}
-              <p className="text-center text-xs text-muted-foreground mt-2">
-                {modalIdx + 1} / {certs.length}
-              </p>
+                {/* Counter */}
+                <span className="text-sm text-muted-foreground font-medium">
+                  {modalIdx + 1} / {certs.length}
+                </span>
+
+                {/* Next */}
+                <button
+                  onClick={() => goModal(1)}
+                  className="p-2.5 rounded-full glass hover:glow-sm transition"
+                >
+                  <ChevronRight size={16} />
+                </button>
+              </div>
             </motion.div>
           </motion.div>
         )}

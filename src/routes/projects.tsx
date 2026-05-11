@@ -263,9 +263,9 @@ function ProjectCard({
       </h3>
       <p className="text-xs text-muted-foreground mt-1 leading-relaxed">{p.desc}</p>
 
-      {/* Stack pills */}
+      {/* Stack pills — max 2, sisanya +N */}
       <div className="flex flex-wrap gap-1.5 mt-3">
-        {p.stack.map((s, si) => (
+        {p.stack.slice(0, 2).map((s, si) => (
           <motion.span
             key={s}
             initial={{ opacity: 0, scale: 0.8 }}
@@ -284,7 +284,45 @@ function ProjectCard({
             {s}
           </motion.span>
         ))}
+        {p.stack.length > 2 && (
+          <motion.span
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: i * 0.07 + 0.23 }}
+            className="pill !text-[10px] !py-0.5 transition-all duration-300"
+            style={
+              hovered
+                ? {
+                    background: `color-mix(in oklab, ${p.accent} 20%, transparent)`,
+                    borderColor: `color-mix(in oklab, ${p.accent} 45%, transparent)`,
+                    color: p.accent,
+                  }
+                : {}
+            }
+          >
+            +{p.stack.length - 2}
+          </motion.span>
+        )}
       </div>
+
+      {/* View Details button */}
+      <motion.button
+        onClick={onClick}
+        whileHover={{ scale: 1.04 }}
+        whileTap={{ scale: 0.96 }}
+        className="mt-4 w-full py-2 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition-all duration-300"
+        style={{
+          background: hovered
+            ? `linear-gradient(120deg, ${p.accent}, ${p.accent2})`
+            : "color-mix(in oklab, var(--neon) 10%, transparent)",
+          border: hovered
+            ? "1px solid transparent"
+            : "1px solid color-mix(in oklab, var(--neon) 25%, transparent)",
+          color: hovered ? "white" : "var(--muted-foreground)",
+        }}
+      >
+        View Details <ArrowUpRight size={12} />
+      </motion.button>
 
       {/* Bottom glow line */}
       <motion.div
@@ -548,7 +586,7 @@ function ProjectsPage() {
               exit={{ scale: 0.85, y: 40, opacity: 0 }}
               transition={{ type: "spring", stiffness: 300, damping: 28 }}
               onClick={(e) => e.stopPropagation()}
-              className="glass-strong rounded-3xl p-6 md:p-8 max-w-2xl w-full relative max-h-[85vh] overflow-y-auto"
+              className="glass-strong rounded-3xl p-5 md:p-8 max-w-2xl w-full relative max-h-[90vh] overflow-y-auto mx-2 sm:mx-0"
               style={{
                 boxShadow: `0 0 0 1px color-mix(in oklab,${open.accent} 35%,transparent), 0 30px 80px -20px color-mix(in oklab,${open.accent} 50%,transparent)`,
               }}
@@ -579,7 +617,7 @@ function ProjectsPage() {
               </motion.div>
 
               <span className="pill">{open.cat}</span>
-              <h3 className="text-3xl font-bold mt-3">
+              <h3 className="text-2xl md:text-3xl font-bold mt-3 break-words">
                 <span
                   style={{
                     background: `linear-gradient(120deg, ${open.accent}, ${open.accent2})`,
@@ -612,23 +650,24 @@ function ProjectsPage() {
                 ))}
               </div>
 
-              <div className="flex gap-3 mt-6">
-                <button onClick={() => setOpen(null)} className="btn-ghost">
-                  <X size={14} /> Close
-                </button>
+              {/* Source + Visit Project sejajar, Close di bawah full width */}
+              <div className="flex gap-2 mt-6">
                 <a
                   href="#"
-                  className="btn-primary"
+                  className="btn-primary flex-1 justify-center"
                   style={{
                     background: `linear-gradient(120deg, ${open.accent}, ${open.accent2})`,
                   }}
                 >
                   <Github size={14} /> Source
                 </a>
-                <a href="#" className="btn-primary">
+                <a href="#" className="btn-primary flex-1 justify-center">
                   Visit Project <ExternalLink size={14} />
                 </a>
               </div>
+              <button onClick={() => setOpen(null)} className="btn-ghost w-full justify-center mt-2">
+                <X size={14} /> Close
+              </button>
             </motion.div>
           </motion.div>
         )}
