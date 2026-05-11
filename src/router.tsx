@@ -9,7 +9,7 @@ export const getRouter = () => {
     routeTree,
     context: { queryClient },
     scrollRestoration: true,
-    defaultPreloadStaleTime: 0,
+    defaultPreloadStaleTime: 30_000, // 30s — prevents aggressive re-fetching on hover
   });
 
   return router;

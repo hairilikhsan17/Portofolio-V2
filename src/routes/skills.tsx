@@ -8,7 +8,93 @@ import {
   SiGit, SiGithubactions, SiVite, SiPostman, SiFigma, SiFramer, SiVercel, SiGithub,
 } from "react-icons/si";
 import { FaAws, FaDatabase } from "react-icons/fa";
-import { Section } from "./index";
+
+/* ─── CSS keyframe gradient cycling (every 3 s, 6 palettes) ──── */
+const GRADIENT_CYCLE_STYLE = `
+@keyframes gradientCycle {
+  0%   { background-image: linear-gradient(135deg, #a78bfa 0%, #60a5fa 50%, #22d3ee 100%); }
+  16%  { background-image: linear-gradient(135deg, #f472b6 0%, #fb923c 50%, #fbbf24 100%); }
+  33%  { background-image: linear-gradient(135deg, #34d399 0%, #22d3ee 50%, #60a5fa 100%); }
+  50%  { background-image: linear-gradient(135deg, #f43f5e 0%, #a855f7 50%, #6366f1 100%); }
+  66%  { background-image: linear-gradient(135deg, #fbbf24 0%, #f472b6 50%, #a78bfa 100%); }
+  83%  { background-image: linear-gradient(135deg, #38bdf8 0%, #34d399 50%, #a3e635 100%); }
+  100% { background-image: linear-gradient(135deg, #a78bfa 0%, #60a5fa 50%, #22d3ee 100%); }
+}
+@keyframes gradientCycleBg {
+  0%   { background: linear-gradient(135deg, #a78bfa 0%, #60a5fa 50%, #22d3ee 100%); }
+  16%  { background: linear-gradient(135deg, #f472b6 0%, #fb923c 50%, #fbbf24 100%); }
+  33%  { background: linear-gradient(135deg, #34d399 0%, #22d3ee 50%, #60a5fa 100%); }
+  50%  { background: linear-gradient(135deg, #f43f5e 0%, #a855f7 50%, #6366f1 100%); }
+  66%  { background: linear-gradient(135deg, #fbbf24 0%, #f472b6 50%, #a78bfa 100%); }
+  83%  { background: linear-gradient(135deg, #38bdf8 0%, #34d399 50%, #a3e635 100%); }
+  100% { background: linear-gradient(135deg, #a78bfa 0%, #60a5fa 50%, #22d3ee 100%); }
+}
+.gradient-text-cycle {
+  background-image: linear-gradient(135deg, #a78bfa 0%, #60a5fa 50%, #22d3ee 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  animation: gradientCycle 18s steps(1, end) infinite;
+}
+.gradient-line-cycle {
+  background: linear-gradient(135deg, #a78bfa 0%, #60a5fa 50%, #22d3ee 100%);
+  animation: gradientCycleBg 18s steps(1, end) infinite;
+}
+/* Fix: counter numbers inside gradient wrapper must be visible */
+.stat-number {
+  background-image: linear-gradient(135deg, #a78bfa 0%, #60a5fa 50%, #22d3ee 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  animation: gradientCycle 18s steps(1, end) infinite;
+  display: inline-block;
+}
+`;
+
+/* ─── Compact Section Header ─────────────────────────────────── */
+function Section({ title, badge, subtitle, children }: { title: string; badge: string; subtitle?: string; children: React.ReactNode }) {
+  return (
+    <section className="max-w-6xl mx-auto py-10">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.5 }}
+        className="text-center mb-7"
+      >
+        {/* Badge */}
+        <span className="pill" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.12)" }}>
+          <span className="gradient-text-cycle" style={{ fontWeight: 600 }}>{badge}</span>
+        </span>
+
+        {/* Title */}
+        <h2 className="gradient-text-cycle text-3xl md:text-4xl font-bold mt-3 tracking-tight">
+          {title}
+        </h2>
+
+        {/* Subtitle */}
+        {subtitle && (
+          <p className="gradient-text-cycle mt-2 text-sm" style={{ opacity: 0.85 }}>
+            {subtitle}
+          </p>
+        )}
+
+        {/* Decorative underline */}
+        <motion.div
+          className="gradient-line-cycle mx-auto mt-3 h-px rounded-full"
+          style={{ maxWidth: 100 }}
+          initial={{ scaleX: 0, opacity: 0 }}
+          whileInView={{ scaleX: 1, opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.7, delay: 0.15 }}
+        />
+      </motion.div>
+      {children}
+    </section>
+  );
+}
 
 export const Route = createFileRoute("/skills")({
   head: () => ({
@@ -77,7 +163,7 @@ const allTools = [
   { name: "Postman", Logo: SiPostman, color: "#FF6C37" },
 ];
 
-// Animated counter
+// Animated counter — mv is a stable MotionValue object, safe to omit from deps
 function Counter({ to, suffix = "" }: { to: number; suffix?: string }) {
   const ref = useRef<HTMLSpanElement>(null);
   const inView = useInView(ref, { once: true, margin: "-50px" });
@@ -86,32 +172,52 @@ function Counter({ to, suffix = "" }: { to: number; suffix?: string }) {
   const display = useTransform(spring, (v) => Math.round(v).toString() + suffix);
   useEffect(() => {
     if (inView) animate(mv, to, { duration: 2 });
-  }, [inView, to, mv]);
-  return <motion.span ref={ref}>{display}</motion.span>;
+    // mv is a stable MotionValue ref — intentionally excluded from deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [inView, to]);
+  return <motion.span ref={ref} style={{ display: "inline" }}>{display}</motion.span>;
 }
 
-// Falling tool icon
+// Pre-computed fall offsets per icon index — no Math.random() at render time
+const FALL_OFFSETS = [
+  { x: 60, rot: 200 }, { x: -80, rot: -300 }, { x: 40, rot: 250 }, { x: -60, rot: -180 },
+  { x: 90, rot: 320 }, { x: -40, rot: -240 }, { x: 70, rot: 180 }, { x: -90, rot: 280 },
+  { x: 50, rot: -350 }, { x: -70, rot: 220 }, { x: 80, rot: -260 }, { x: -50, rot: 300 },
+  { x: 30, rot: -200 }, { x: -100, rot: 340 }, { x: 100, rot: -280 }, { x: -30, rot: 160 },
+];
+
+// Falling tool icon — fixed: don't pass empty {} to animate, use key to reset
 function ToolIcon({ tool, idx }: { tool: typeof allTools[0]; idx: number }) {
   const [fallen, setFallen] = useState(false);
   const Logo = tool.Logo;
+  const { x: fallX, rot: fallRot } = FALL_OFFSETS[idx % FALL_OFFSETS.length];
+
+  const handleClick = () => {
+    if (fallen) return;
+    setFallen(true);
+    setTimeout(() => setFallen(false), 2200);
+  };
+
   return (
     <motion.button
+      key={fallen ? "fallen" : "normal"}
       type="button"
-      onClick={() => { setFallen(true); setTimeout(() => setFallen(false), 2200); }}
+      onClick={handleClick}
       initial={{ opacity: 0, y: -80, rotate: -180, scale: 0 }}
       whileInView={{ opacity: 1, y: 0, rotate: 0, scale: 1 }}
       viewport={{ once: true, margin: "-80px" }}
       transition={{ type: "spring", stiffness: 120, damping: 12, delay: idx * 0.06 }}
-      animate={fallen ? {
-        y: [0, -30, 600],
-        x: [0, (Math.random() - 0.5) * 200],
-        rotate: [0, (Math.random() - 0.5) * 720],
-        opacity: [1, 1, 0],
-      } : {}}
-      whileHover={{ scale: 1.15, y: -6, rotate: [0, -8, 8, 0] }}
-      transition-duration={fallen ? 2 : undefined}
+      {...(fallen ? {
+        animate: {
+          y: [0, -30, 600],
+          x: [0, fallX],
+          rotate: [0, fallRot],
+          opacity: [1, 1, 0],
+        },
+        transition: { duration: 0.9, ease: "easeIn" },
+      } : {})}
+      whileHover={fallen ? {} : { scale: 1.15, y: -6 }}
       className="glass rounded-2xl p-4 flex flex-col items-center gap-2 cursor-pointer group hover:glow min-w-[100px]"
-      style={fallen ? { transition: "all 2s cubic-bezier(.55,.06,.68,.19)" } : {}}
     >
       <Logo size={36} style={{ color: tool.color }} className="drop-shadow-[0_0_10px_currentColor] transition-transform group-hover:scale-110" />
       <span className="text-xs font-medium">{tool.name}</span>
@@ -124,10 +230,19 @@ function SkillsPage() {
 
   return (
     <div className="px-4">
-      <section className="max-w-5xl mx-auto text-center py-16">
-        <span className="pill">SKILLS & SERVICES</span>
-        <h1 className="mt-4 text-5xl md:text-6xl font-bold tracking-tight">Skills & <span className="text-gradient">Expertise</span></h1>
-        <p className="text-muted-foreground mt-4">Building scalable, modern, and user-focused digital experiences.</p>
+      {/* Single style injection for the whole page */}
+      <style>{GRADIENT_CYCLE_STYLE}</style>
+
+      <section className="max-w-5xl mx-auto text-center py-10">
+        <span className="pill" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.12)" }}>
+          <span className="gradient-text-cycle" style={{ fontWeight: 600 }}>SKILLS & SERVICES</span>
+        </span>
+        <h1 className="gradient-text-cycle mt-3 text-5xl md:text-6xl font-bold tracking-tight">
+          Skills &amp; Expertise
+        </h1>
+        <p className="gradient-text-cycle mt-3 text-sm" style={{ opacity: 0.8 }}>
+          Building scalable, modern, and user-focused digital experiences.
+        </p>
       </section>
 
       <div className="max-w-6xl mx-auto grid lg:grid-cols-[260px_1fr] gap-6">
@@ -276,8 +391,11 @@ function SkillsPage() {
                 style={{ background: s.color }}
               />
               <s.Icon size={24} className="mx-auto mb-2" style={{ color: s.color }} />
-              <div className="text-4xl md:text-5xl font-bold text-gradient">
-                <Counter to={s.v} suffix={s.suffix} />
+              {/* Use stat-number class directly — avoids text-gradient wrapper breaking Counter */}
+              <div className="text-4xl md:text-5xl font-bold">
+                <span className="stat-number">
+                  <Counter to={s.v} suffix={s.suffix} />
+                </span>
               </div>
               <div className="text-xs text-muted-foreground mt-2">{s.l}</div>
             </motion.div>
@@ -328,7 +446,7 @@ function SkillsPage() {
                 ))}
               </div>
             </div>
-            <button className="btn-primary w-full justify-center">Let's Build Together <Send size={14} /></button>
+            <button className="btn-primary w-full" style={{ display: "flex", justifyContent: "center" }}>Let's Build Together <Send size={14} /></button>
           </form>
         </div>
       </Section>
