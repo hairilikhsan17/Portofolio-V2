@@ -2,7 +2,7 @@ import { Link, useRouterState } from "@tanstack/react-router";
 import { Moon, Sun } from "lucide-react";
 import { useEffect, useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import profile from "../assets/profile.jpg";
+import profile from "../assets/profile.png";
 
 /* ─── CSS ────────────────────────────────────────────────────── */
 const NAVBAR_STYLE = `
@@ -335,12 +335,13 @@ export function Navbar() {
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.95 }}
                 transition={{ type: "spring", stiffness: 350, damping: 20 }}
-                className="relative w-9 h-9 rounded-full overflow-hidden flex-shrink-0"
+                className="relative w-10 h-10 rounded-full overflow-hidden flex-shrink-0"
                 style={{
                   boxShadow: "0 0 0 2px color-mix(in oklab, var(--neon) 60%, transparent), 0 0 12px color-mix(in oklab, var(--neon) 30%, transparent)",
+                  isolation: "isolate",
                 }}
               >
-                <img src={profile} alt="Hairil Ikhsan" className="w-full h-full object-cover" />
+                <img src={profile} alt="Hairil Ikhsan" className="w-full h-full object-cover" style={{ objectPosition: "center 15%", imageRendering: "auto", transform: "translateZ(0)", willChange: "transform" }} />
                 <motion.div
                   className="absolute inset-0 bg-gradient-to-br from-white/25 to-transparent"
                   animate={{ opacity: [0.2, 0.5, 0.2] }}

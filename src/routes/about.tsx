@@ -3,7 +3,7 @@ import { motion, useMotionValue, useSpring, AnimatePresence } from "framer-motio
 import { useState, useEffect, useRef } from "react";
 import { Code2, Palette, Cloud, ChevronDown, Github } from "lucide-react";
 import { GithubContributions } from "../components/GithubContributions";
-import profile from "../assets/profile.jpg";
+import profile from "../assets/profile.png";
 
 /* ─── Gradient Section Header (replaces imported Section for About) ── */
 const SECTION_GRADIENTS: Record<string, string> = {
@@ -758,6 +758,7 @@ function ProfileCard() {
             alt="Hairil Ikhsan"
             loading="lazy"
             className="w-full h-60 object-cover"
+            style={{ objectPosition: "center 10%" }}
             animate={{ scale: hovered ? 1.07 : 1 }}
             transition={{ duration: 0.5, ease: "easeOut" }}
           />
@@ -1055,7 +1056,7 @@ function ConnectSection() {
               }}
               whileHover={{ scale: 1.08, boxShadow: "0 0 0 3px rgba(59,130,246,0.6), 0 4px 20px rgba(59,130,246,0.3)" }}
             >
-              <img src={profile} alt="Hairil Ikhsan" className="w-full h-full object-cover" />
+              <img src={profile} alt="Hairil Ikhsan" className="w-full h-full object-cover" style={{ objectPosition: "center 10%" }} />
             </motion.div>
 
             {/* Nama bold */}

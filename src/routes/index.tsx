@@ -10,7 +10,7 @@ import {
 import { FaAws } from "react-icons/fa";
 import { GithubContributions } from "../components/GithubContributions";
 import { useIsMobile } from "../hooks/use-mobile";
-import profile from "../assets/profile.jpg";
+import profile from "../assets/profile.png";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -771,6 +771,7 @@ function HomePage() {
                 src={profile}
                 alt="Hairil Ikhsan"
                 className="w-full h-full object-cover"
+                style={{ objectPosition: "center 10%" }}
                 width={768} height={1024}
               />
               {/* Hover shimmer */}

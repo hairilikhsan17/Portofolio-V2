@@ -2,7 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { motion, AnimatePresence } from "framer-motion";
 import { Github, Linkedin, Mail, ArrowUp, Instagram, Twitter, MapPin, Phone, Heart, Sparkles, ChevronLeft, ChevronRight } from "lucide-react";
 import { useState, useRef } from "react";
-import profile from "../assets/profile.jpg";
+import profile from "../assets/profile.png";
 
 /* ─── CSS: gradient cycling for footer text ─────────────────── */
 const FOOTER_STYLE = `
@@ -204,9 +204,10 @@ export function Footer() {
                   className="relative w-14 h-14 rounded-2xl overflow-hidden"
                   style={{
                     boxShadow: "0 0 0 2px color-mix(in oklab, var(--neon) 50%, transparent), 0 0 20px color-mix(in oklab, var(--neon) 30%, transparent)",
+                    isolation: "isolate",
                   }}
                 >
-                  <img src={profile} alt="Hairil Ikhsan" className="w-full h-full object-cover" />
+                  <img src={profile} alt="Hairil Ikhsan" className="w-full h-full object-cover" style={{ objectPosition: "center 15%", transform: "translateZ(0)", willChange: "transform" }} />
                   <motion.div
                     className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent"
                     animate={{ opacity: [0.3, 0.6, 0.3] }}

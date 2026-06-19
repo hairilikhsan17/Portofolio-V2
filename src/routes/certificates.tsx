@@ -2,6 +2,12 @@ import { createFileRoute } from "@tanstack/react-router";
 import { motion, AnimatePresence, useInView, useMotionValue, useSpring, type Variants } from "framer-motion";
 import { useState, useRef, useEffect } from "react";
 import { Award, X, ExternalLink, Download, ChevronLeft, ChevronRight, BadgeCheck, Copy, Check, CalendarDays } from "lucide-react";
+import revouSoftwarePdf from "../assets/Sertifikat/Sofware Engginaring Revou mini.pdf";
+import revouDataAnalysisPdf from "../assets/Sertifikat/Revou mini data analis.pdf";
+import intensiveCampPdf from "../assets/Sertifikat/Sertifikat Intensive Camp - Hairil Ikhsan.pdf";
+import asdosPdf from "../assets/Sertifikat/Sertifikat Asdos.pdf";
+import k3IjsPdf from "../assets/Sertifikat/Sertifikat K3 IJS.pdf";
+import fullstackDibimbingPdf from "../assets/Sertifikat/Event Online - Fullstack Web Development dibimbing.pdf";
 
 export const Route = createFileRoute("/certificates")({
   head: () => ({
@@ -100,19 +106,21 @@ function Section({ title, badge, subtitle, children }: { title: string; badge: s
 }
 
 const certs = [
-  { title: "Microsoft Azure AI Foundry", issuer: "Microsoft", year: "2026", cat: "Cloud", featured: true, credentialId: "0LZ0Y33E3X65", skills: ["Azure", "AI", "Cloud", "Machine Learning"] },
-  { title: "Junior Web Developer", issuer: "BNSP", year: "2025", cat: "Web Development", credentialId: "", skills: ["Laravel", "MySQL", "HTML", "CSS", "JavaScript"] },
-  { title: "Junior Network Administrator", issuer: "BNSP", year: "2025", cat: "Networking", credentialId: "", skills: ["Cisco", "TCP/IP", "Routing"] },
-  { title: "AI Talent Development Nation", issuer: "Kominfo", year: "2025", cat: "AI & Data", credentialId: "", skills: ["Python", "Machine Learning", "Deep Learning"] },
-  { title: "Dicoding AI Engineer Entry", issuer: "Dicoding", year: "2025", cat: "AI & Data", credentialId: "", skills: ["TensorFlow", "Python", "Neural Networks"] },
-  { title: "IBM Granite", issuer: "IBM", year: "2026", cat: "AI & Data", credentialId: "", skills: ["IBM Watson", "Generative AI", "LLM"] },
-  { title: "Pemrograman Python", issuer: "Dicoding", year: "2024", cat: "Programming", credentialId: "", skills: ["Python", "OOP", "Data Structures"] },
-  { title: "Pemateri Cyber Security", issuer: "UNDIPA", year: "2025", cat: "Cyber Security", credentialId: "", skills: ["Ethical Hacking", "Network Security", "OWASP"] },
-  { title: "Hackathon BIKN", issuer: "BIKN", year: "2025", cat: "Workshop", credentialId: "", skills: ["Problem Solving", "Teamwork", "Innovation"] },
-  { title: "Asisten Dosen", issuer: "UNDIPA", year: "2024", cat: "Workshop", credentialId: "", skills: ["Teaching", "Research", "Mentoring"] },
+  { title: "Microsoft Azure AI Foundry", issuer: "Microsoft", year: "2026", cat: "Cloud", featured: true, credentialId: "0LZ0Y33E3X65", skills: ["Azure", "AI", "Cloud", "Machine Learning"], pdfFile: undefined as string | undefined, fileUrl: undefined as string | undefined, fileName: undefined as string | undefined },
+  { title: "Software Engineering", issuer: "Revou", year: "2026", cat: "Web Development", credentialId: "", skills: ["Laravel", "MySQL", "HTML", "CSS", "JavaScript"], pdfFile: revouSoftwarePdf, fileUrl: revouSoftwarePdf, fileName: "Sofware Engginaring Revou mini.pdf" },
+  { title: "Junior Network Administrator", issuer: "BNSP", year: "2025", cat: "Networking", credentialId: "", skills: ["Cisco", "TCP/IP", "Routing"], pdfFile: undefined as string | undefined, fileUrl: undefined as string | undefined, fileName: undefined as string | undefined },
+  { title: "Data Analyst", issuer: "SpecialSkill", year: "2026", cat: "AI & Data", credentialId: "", skills: ["Python", "Excel", "Machine Learning"], pdfFile: intensiveCampPdf, fileUrl: intensiveCampPdf, fileName: "Sertifikat Intensive Camp - Hairil Ikhsan.pdf" },
+  { title: "Dicoding AI Engineer Entry", issuer: "Dicoding", year: "2025", cat: "AI & Data", credentialId: "", skills: ["TensorFlow", "Python", "Neural Networks"], pdfFile: undefined as string | undefined, fileUrl: undefined as string | undefined, fileName: undefined as string | undefined },
+  { title: "IBM Granite", issuer: "IBM", year: "2026", cat: "AI & Data", credentialId: "", skills: ["IBM Watson", "Generative AI", "LLM"], pdfFile: undefined as string | undefined, fileUrl: undefined as string | undefined, fileName: undefined as string | undefined },
+  { title: "Pemrograman Python Data Analyst", issuer: "Revou", year: "2025", cat: "AI & Data", credentialId: "", skills: ["Python", "Excel", "Toblue"], pdfFile: revouDataAnalysisPdf, fileUrl: revouDataAnalysisPdf, fileName: "Revou mini data analis.pdf" },
+  { title: "Pemateri Cyber Security", issuer: "UNDIPA", year: "2025", cat: "Cyber Security", credentialId: "", skills: ["Ethical Hacking", "Network Security", "OWASP"], pdfFile: undefined as string | undefined, fileUrl: undefined as string | undefined, fileName: undefined as string | undefined },
+  { title: "Hackathon BIKN", issuer: "BIKN", year: "2025", cat: "Workshop", credentialId: "", skills: ["Problem Solving", "Teamwork", "Innovation"], pdfFile: undefined as string | undefined, fileUrl: undefined as string | undefined, fileName: undefined as string | undefined },
+  { title: "Asisten Dosen", issuer: "UNDIPA", year: "2025/2026", cat: "Workshop", credentialId: "", skills: ["Teaching", "Research", "Mentoring", "Mentoring & Tutoring", "Evaluation & Reporting", "Course Administration & Preparation"], pdfFile: asdosPdf, fileUrl: asdosPdf, fileName: "Sertifikat Asdos.pdf" },
+  { title: "Ahli K3 Umum", issuer: "Kemenaker RI Bay IJS", year: "2026", cat: "Pelatihan", credentialId: "", skills: ["K3", "Keselamatan Kerja", "Kesehatan Kerja", "Regulasi K3", "Manajemen Risiko"], pdfFile: k3IjsPdf, fileUrl: k3IjsPdf, fileName: "Sertifikat K3 IJS.pdf" },
+  { title: "Event Online - Fullstack Web Development", issuer: "Dibimbing", year: "2026", cat: "Networking", credentialId: "", skills: ["HTML", "CSS", "JavaScript", "React", "Node.js", "Full Stack"], pdfFile: fullstackDibimbingPdf, fileUrl: fullstackDibimbingPdf, fileName: "Event Online - Fullstack Web Development dibimbing.pdf" },
 ];
 
-const cats = ["All", "Web Development", "Cloud", "AI & Data", "Cyber Security", "Networking", "Programming", "Workshop"];
+const cats = ["All", "Web Development", "Cloud", "AI & Data", "Cyber Security", "Networking", "Programming", "Workshop", "Pelatihan"];
 
 const achievements = [
   { v: 10, suffix: "+", l: "Certifications" },
@@ -156,9 +164,9 @@ function AnimatedNumber({ target, suffix }: { target: number; suffix: string }) 
 }
 
 /* ── Professional Credentials Slider ── */
-const featuredCerts = certs.filter((c) => c.featured || ["Junior Web Developer", "IBM Granite", "AI Talent Development Nation"].includes(c.title));
+const featuredCerts = certs.filter((c) => c.featured || ["Software Engineering", "IBM Granite", "Ahli K3 Umum"].includes(c.title));
 
-function CredentialsSlider() {
+function CredentialsSlider({ onOpen }: { onOpen: (c: typeof certs[number]) => void }) {
   const [idx, setIdx] = useState(0);
   const [dir, setDir] = useState(1);
   const cert = featuredCerts[idx];
@@ -194,13 +202,24 @@ function CredentialsSlider() {
               className="aspect-video rounded-2xl flex items-center justify-center relative overflow-hidden"
               style={{ background: "linear-gradient(135deg, var(--neon), var(--neon-2))" }}
             >
-              {/* shimmer */}
-              <motion.div
-                animate={{ x: ["-100%", "200%"] }}
-                transition={{ duration: 2.5, repeat: Infinity, ease: "linear", repeatDelay: 1 }}
-                className="absolute inset-0 w-1/3 bg-white/20 skew-x-12 blur-sm"
-              />
-              <BadgeCheck className="text-white drop-shadow-lg" size={64} strokeWidth={1.5} />
+              {cert.pdfFile ? (
+                <iframe
+                  src={`${cert.pdfFile}#toolbar=0&navpanes=0&scrollbar=0&view=FitH`}
+                  className="w-full h-full rounded-2xl pointer-events-none"
+                  title={cert.title}
+                  style={{ border: "none", background: "white" }}
+                />
+              ) : (
+                <>
+                  {/* shimmer */}
+                  <motion.div
+                    animate={{ x: ["-100%", "200%"] }}
+                    transition={{ duration: 2.5, repeat: Infinity, ease: "linear", repeatDelay: 1 }}
+                    className="absolute inset-0 w-1/3 bg-white/20 skew-x-12 blur-sm"
+                  />
+                  <BadgeCheck className="text-white drop-shadow-lg" size={64} strokeWidth={1.5} />
+                </>
+              )}
             </motion.div>
             <div className="flex flex-col justify-center">
               <span className="pill w-fit">⭐ Featured</span>
@@ -211,7 +230,13 @@ function CredentialsSlider() {
               <div className="flex gap-2 mt-3">
                 <span className="pill">{cert.cat}</span>
               </div>
-              <button className="btn-primary w-fit mt-5">
+              <button
+                className="btn-primary w-fit mt-5"
+                onClick={() => {
+                  if (cert.fileUrl) viewFile(cert.fileUrl);
+                  else onOpen(cert);
+                }}
+              >
                 View Certificate <ExternalLink size={14} />
               </button>
             </div>
@@ -253,6 +278,20 @@ function CredentialsSlider() {
       </div>
     </div>
   );
+}
+
+/* ── Helper: view & download cert files ── */
+function viewFile(fileUrl: string) {
+  window.open(fileUrl, "_blank", "noopener,noreferrer");
+}
+
+function downloadFile(fileUrl: string, fileName: string) {
+  const a = document.createElement("a");
+  a.href = fileUrl;
+  a.download = fileName;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
 }
 
 /* ── Certificate Card ── */
@@ -307,14 +346,26 @@ function CertCard({ c, onClick, i }: { c: typeof certs[number]; onClick: () => v
             "linear-gradient(135deg, color-mix(in oklab,var(--neon) 30%,transparent), color-mix(in oklab,var(--neon-2) 30%,transparent))",
         }}
       >
-        <motion.div
-          animate={hovered ? { x: ["-100%", "200%"] } : { x: "-100%" }}
-          transition={{ duration: 1.2, ease: "linear" }}
-          className="absolute inset-0 w-1/3 bg-white/15 skew-x-12 blur-sm"
-        />
-        <motion.div animate={hovered ? { rotate: 360, scale: 1.15 } : { rotate: 0, scale: 1 }} transition={{ duration: 0.5 }}>
-          <BadgeCheck className="text-white/80" size={36} strokeWidth={1.5} />
-        </motion.div>
+        {c.pdfFile ? (
+          /* PDF preview — rendered via iframe like Google Drive */
+          <iframe
+            src={`${c.pdfFile}#toolbar=0&navpanes=0&scrollbar=0&view=FitH`}
+            className="w-full h-full rounded-2xl pointer-events-none"
+            title={c.title}
+            style={{ border: "none", background: "white" }}
+          />
+        ) : (
+          <>
+            <motion.div
+              animate={hovered ? { x: ["-100%", "200%"] } : { x: "-100%" }}
+              transition={{ duration: 1.2, ease: "linear" }}
+              className="absolute inset-0 w-1/3 bg-white/15 skew-x-12 blur-sm"
+            />
+            <motion.div animate={hovered ? { rotate: 360, scale: 1.15 } : { rotate: 0, scale: 1 }} transition={{ duration: 0.5 }}>
+              <BadgeCheck className="text-white/80" size={36} strokeWidth={1.5} />
+            </motion.div>
+          </>
+        )}
       </div>
 
       <span className="pill !text-[10px]">{c.cat}</span>
@@ -354,7 +405,11 @@ function CertCard({ c, onClick, i }: { c: typeof certs[number]; onClick: () => v
 
       {/* View Details button */}
       <motion.button
-        onClick={onClick}
+        onClick={(e) => {
+          e.stopPropagation();
+          if (c.fileUrl) viewFile(c.fileUrl);
+          else onClick();
+        }}
         whileHover={{ scale: 1.04 }}
         whileTap={{ scale: 0.97 }}
         className="mt-3 w-full relative z-10 flex items-center justify-center gap-1.5 py-1.5 rounded-xl text-xs font-semibold transition-all duration-200"
@@ -369,7 +424,7 @@ function CertCard({ c, onClick, i }: { c: typeof certs[number]; onClick: () => v
         }}
       >
         <ExternalLink size={11} />
-        View Details
+        {c.fileUrl ? "View Certificate" : "View Details"}
       </motion.button>
 
       {/* Bottom glow line on hover */}
@@ -857,7 +912,7 @@ function CertificatesPage() {
 
       {/* Slider */}
       <motion.div variants={itemVariants}>
-        <CredentialsSlider />
+        <CredentialsSlider onOpen={openCert} />
       </motion.div>
 
       {/* Filter tabs */}
@@ -995,12 +1050,31 @@ function CertificatesPage() {
                     </div>
 
                     <div className="flex gap-2 mt-6">
-                      <a href="#" className="btn-ghost flex-1 justify-center text-sm">
-                        <Download size={13} /> Download
-                      </a>
-                      <a href="#" className="btn-primary flex-1 justify-center text-sm">
-                        Verify <ExternalLink size={13} />
-                      </a>
+                      {open.fileUrl ? (
+                        <>
+                          <button
+                            onClick={() => downloadFile(open.fileUrl!, open.fileName!)}
+                            className="btn-ghost flex-1 justify-center text-sm"
+                          >
+                            <Download size={13} /> Download
+                          </button>
+                          <button
+                            onClick={() => viewFile(open.fileUrl!)}
+                            className="btn-primary flex-1 justify-center text-sm"
+                          >
+                            View <ExternalLink size={13} />
+                          </button>
+                        </>
+                      ) : (
+                        <>
+                          <button disabled className="btn-ghost flex-1 justify-center text-sm opacity-40 cursor-not-allowed">
+                            <Download size={13} /> Download
+                          </button>
+                          <button disabled className="btn-primary flex-1 justify-center text-sm opacity-40 cursor-not-allowed">
+                            View <ExternalLink size={13} />
+                          </button>
+                        </>
+                      )}
                     </div>
                   </div>
 
@@ -1012,18 +1086,29 @@ function CertificatesPage() {
                       className="w-full aspect-[4/3] rounded-2xl flex items-center justify-center relative overflow-hidden"
                       style={{ background: "linear-gradient(135deg, var(--neon), var(--neon-2))" }}
                     >
-                      <motion.div
-                        animate={{ x: ["-100%", "200%"] }}
-                        transition={{ duration: 2, repeat: Infinity, ease: "linear", repeatDelay: 0.5 }}
-                        className="absolute inset-0 w-1/3 bg-white/20 skew-x-12 blur-sm"
-                      />
-                      {/* Icon keren — BadgeCheck */}
-                      <motion.div
-                        animate={{ rotate: [0, 5, -5, 0], scale: [1, 1.05, 1] }}
-                        transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                      >
-                        <BadgeCheck className="text-white drop-shadow-lg" size={72} strokeWidth={1.5} />
-                      </motion.div>
+                      {open.pdfFile ? (
+                        /* PDF rendered inline — like Google Drive viewer */
+                        <iframe
+                          src={`${open.pdfFile}#toolbar=0&navpanes=0&scrollbar=0&view=FitH`}
+                          className="w-full h-full rounded-2xl"
+                          title={open.title}
+                          style={{ border: "none", background: "white", minHeight: 280 }}
+                        />
+                      ) : (
+                        <>
+                          <motion.div
+                            animate={{ x: ["-100%", "200%"] }}
+                            transition={{ duration: 2, repeat: Infinity, ease: "linear", repeatDelay: 0.5 }}
+                            className="absolute inset-0 w-1/3 bg-white/20 skew-x-12 blur-sm"
+                          />
+                          <motion.div
+                            animate={{ rotate: [0, 5, -5, 0], scale: [1, 1.05, 1] }}
+                            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                          >
+                            <BadgeCheck className="text-white drop-shadow-lg" size={72} strokeWidth={1.5} />
+                          </motion.div>
+                        </>
+                      )}
                     </motion.div>
                   </div>
                 </motion.div>
