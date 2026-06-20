@@ -173,399 +173,524 @@ function MagneticCard({ children, className }: { children: React.ReactNode; clas
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   TECH ICONS PHYSICS HERO
-   Menggantikan OrbitingPlanetsHero — background ikon teknologi
-   dengan collision physics, glow, dan efek ledakan saat diklik.
+   PAC-MAN HERO GAME
+   Game Pac-Man style — Pac-Man memakan dot hijau, ghost berwarna
+   merah, toska, kuning, pink, ungu bergerak di maze.
    ═══════════════════════════════════════════════════════════════ */
 
-interface Ball {
-  el: HTMLDivElement;
-  color: string;
-  x: number;
-  y: number;
-  vx: number;
-  vy: number;
-  rot: number;
-  rotSpeed: number;
-  pulsePhase: number;
+/* ─── Pac-Man Hero Game ────────────────────────────────────────── */
+
+// Cell size for the maze grid
+const CELL = 20;
+
+// Maze layout: 1=wall, 0=path. 40 cols x 13 rows — wide banner proportions
+const MAZE_COLS = 40;
+const MAZE_ROWS = 13;
+
+/* 1=wall, 0=path */
+const MAZE_LAYOUT: number[] = [
+  1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+  1,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,1,
+  1,0,1,1,0,0,1,0,1,1,1,1,0,0,1,0,1,1,0,1,1,0,1,1,0,0,1,0,1,1,1,1,0,0,1,0,1,1,0,1,
+  1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
+  1,0,1,1,0,0,1,0,1,0,1,1,1,0,1,0,1,0,0,1,1,0,1,0,1,0,1,0,1,0,1,1,1,0,1,0,1,1,0,1,
+  1,0,0,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,1,0,1,0,0,0,1,0,0,0,1,0,0,0,0,1,
+  1,1,1,0,1,1,1,1,1,0,1,0,1,1,1,1,1,0,1,1,1,1,1,0,1,0,1,1,1,0,1,0,1,1,1,1,1,0,1,1,
+  1,0,0,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,1,0,1,0,0,0,1,0,0,0,1,0,0,0,0,1,
+  1,0,1,1,0,0,1,0,1,0,1,1,1,0,1,0,1,0,0,1,1,0,1,0,1,0,1,0,1,0,1,1,1,0,1,0,1,1,0,1,
+  1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
+  1,0,1,1,0,0,1,0,1,1,1,1,0,0,1,0,1,1,0,1,1,0,1,1,0,0,1,0,1,1,1,1,0,0,1,0,1,1,0,1,
+  1,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,1,
+  1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+];
+
+// Get all walkable cells
+function getWalkableCells(): Array<{col: number; row: number}> {
+  const cells: Array<{col: number; row: number}> = [];
+  for (let r = 0; r < MAZE_ROWS; r++) {
+    for (let c = 0; c < MAZE_COLS; c++) {
+      if (MAZE_LAYOUT[r * MAZE_COLS + c] === 0) cells.push({ col: c, row: r });
+    }
+  }
+  return cells;
 }
 
-const TECH_ICONS = [
-  {
-    name: "React",
-    color: "#61DAFB",
-    svg: `<svg width="40" height="40" viewBox="0 0 40 40"><ellipse cx="20" cy="20" rx="18" ry="7" fill="none" stroke="#61DAFB" stroke-width="2"/><ellipse cx="20" cy="20" rx="18" ry="7" fill="none" stroke="#61DAFB" stroke-width="2" transform="rotate(60 20 20)"/><ellipse cx="20" cy="20" rx="18" ry="7" fill="none" stroke="#61DAFB" stroke-width="2" transform="rotate(120 20 20)"/><circle cx="20" cy="20" r="3" fill="#61DAFB"/></svg>`,
-  },
-  {
-    name: "Vue",
-    color: "#42B883",
-    svg: `<svg width="40" height="40" viewBox="0 0 40 40"><polygon points="20,6 34,6 20,30 6,6" fill="none" stroke="#42B883" stroke-width="2.5"/><polygon points="20,12 28,12 20,26 12,12" fill="#42B883" opacity="0.5"/></svg>`,
-  },
-  {
-    name: "TypeScript",
-    color: "#3178C6",
-    svg: `<svg width="40" height="40" viewBox="0 0 40 40"><rect x="4" y="4" width="32" height="32" rx="4" fill="#3178C6"/><text x="8" y="28" font-size="18" font-weight="bold" fill="white" font-family="monospace">TS</text></svg>`,
-  },
-  {
-    name: "JavaScript",
-    color: "#F7DF1E",
-    svg: `<svg width="40" height="40" viewBox="0 0 40 40"><rect x="4" y="4" width="32" height="32" rx="4" fill="#F7DF1E"/><text x="8" y="28" font-size="18" font-weight="bold" fill="#1a1a1a" font-family="monospace">JS</text></svg>`,
-  },
-  {
-    name: "Python",
-    color: "#3776AB",
-    svg: `<svg width="40" height="40" viewBox="0 0 40 40"><rect x="4" y="4" width="32" height="32" rx="6" fill="#3776AB"/><text x="20" y="26" font-size="20" font-weight="bold" fill="white" text-anchor="middle" font-family="monospace">Py</text></svg>`,
-  },
-  {
-    name: "Laravel",
-    color: "#FF2D20",
-    svg: `<svg width="40" height="40" viewBox="0 0 40 40"><rect x="4" y="4" width="32" height="32" rx="6" fill="#FF2D20"/><text x="20" y="27" font-size="16" font-weight="bold" fill="white" text-anchor="middle" font-family="sans-serif">La</text></svg>`,
-  },
-  {
-    name: "Node.js",
-    color: "#339933",
-    svg: `<svg width="40" height="40" viewBox="0 0 40 40"><rect x="4" y="4" width="32" height="32" rx="6" fill="#339933"/><text x="20" y="26" font-size="13" font-weight="bold" fill="white" text-anchor="middle">Node</text></svg>`,
-  },
-  {
-    name: "HTML",
-    color: "#E34F26",
-    svg: `<svg width="40" height="40" viewBox="0 0 40 40"><polygon points="6,4 34,4 31,36 20,39 9,36" fill="#E34F26"/><text x="20" y="27" font-size="13" font-weight="bold" fill="white" text-anchor="middle">HTML</text></svg>`,
-  },
-  {
-    name: "CSS",
-    color: "#1572B6",
-    svg: `<svg width="40" height="40" viewBox="0 0 40 40"><polygon points="6,4 34,4 31,36 20,39 9,36" fill="#1572B6"/><text x="20" y="27" font-size="15" font-weight="bold" fill="white" text-anchor="middle">CSS</text></svg>`,
-  },
-  {
-    name: "GitHub",
-    color: "#FFFFFF",
-    svg: `<svg width="40" height="40" viewBox="0 0 40 40"><circle cx="20" cy="20" r="16" fill="#1a1a2e" stroke="#555" stroke-width="1"/><path d="M20 8a12 12 0 00-3.8 23.4c.6.1.8-.26.8-.58v-2.22c-3.34.72-4.04-1.6-4.04-1.6-.54-1.38-1.33-1.74-1.33-1.74-1.09-.74.08-.73.08-.73 1.2.08 1.83 1.23 1.83 1.23 1.07 1.83 2.8 1.3 3.49.99.11-.77.42-1.3.76-1.6-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.12-.3-.54-1.52.12-3.17 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 016 0c2.28-1.55 3.29-1.23 3.29-1.23.66 1.65.24 2.87.12 3.17.77.84 1.24 1.91 1.24 3.22 0 4.61-2.81 5.63-5.48 5.93.43.37.81 1.1.81 2.22v3.29c0 .32.21.7.82.58A12 12 0 0020 8z" fill="white"/></svg>`,
-  },
-  {
-    name: "Docker",
-    color: "#2496ED",
-    svg: `<svg width="40" height="40" viewBox="0 0 40 40"><rect x="4" y="4" width="32" height="32" rx="6" fill="#0D1B2A"/><rect x="8" y="14" width="6" height="5" rx="1" fill="#2496ED"/><rect x="16" y="14" width="6" height="5" rx="1" fill="#2496ED"/><rect x="24" y="14" width="6" height="5" rx="1" fill="#2496ED"/><rect x="16" y="22" width="6" height="5" rx="1" fill="#2496ED"/><rect x="8" y="22" width="6" height="5" rx="1" fill="#2496ED"/></svg>`,
-  },
-  {
-    name: "Tailwind",
-    color: "#38BDF8",
-    svg: `<svg width="40" height="40" viewBox="0 0 40 40"><rect x="4" y="4" width="32" height="32" rx="6" fill="#0F172A"/><path d="M10 20c1.5-6 6-9 10.5-7.5-2 4-1 7 2.5 7.5C27 20.5 30 18 32 14c-1.5 6-6 9-10.5 7.5 2-4 1-7-2.5-7.5C14.5 13.5 11.5 16 10 20z" fill="#38BDF8"/></svg>`,
-  },
-  {
-    name: "Next.js",
-    color: "#FFFFFF",
-    svg: `<svg width="40" height="40" viewBox="0 0 40 40"><circle cx="20" cy="20" r="16" fill="#000"/><text x="20" y="25" font-size="13" font-weight="bold" fill="white" text-anchor="middle" font-family="sans-serif">Next</text></svg>`,
-  },
-  {
-    name: "Bootstrap",
-    color: "#7952B3",
-    svg: `<svg width="40" height="40" viewBox="0 0 40 40"><rect x="4" y="4" width="32" height="32" rx="6" fill="#7952B3"/><text x="20" y="28" font-size="20" font-weight="bold" fill="white" text-anchor="middle" font-family="sans-serif">B</text></svg>`,
-  },
-  {
-    name: "AWS",
-    color: "#FF9900",
-    svg: `<svg width="40" height="40" viewBox="0 0 40 40"><rect x="4" y="4" width="32" height="32" rx="6" fill="#232F3E"/><text x="20" y="26" font-size="12" font-weight="bold" fill="#FF9900" text-anchor="middle" font-family="monospace">AWS</text></svg>`,
-  },
-  {
-    name: "Figma",
-    color: "#A259FF",
-    svg: `<svg width="40" height="40" viewBox="0 0 40 40"><rect x="4" y="4" width="32" height="32" rx="6" fill="#1E1E1E"/><circle cx="24" cy="20" r="5" fill="#1ABCFE"/><rect x="13" y="10" width="10" height="10" rx="5" fill="#F24E1E"/><rect x="13" y="20" width="10" height="10" rx="2" fill="#0ACF83"/></svg>`,
-  },
+function isWalkable(col: number, row: number): boolean {
+  if (col < 0 || col >= MAZE_COLS || row < 0 || row >= MAZE_ROWS) return false;
+  return MAZE_LAYOUT[row * MAZE_COLS + col] === 0;
+}
+
+interface PacState {
+  col: number; row: number;
+  px: number; py: number; // pixel pos (interpolated)
+  dx: number; dy: number; // current direction
+  mouthOpen: number; // 0..1 for mouth animation
+  mouthDir: number; // 1 open, -1 close
+}
+
+interface GhostState {
+  col: number; row: number;
+  px: number; py: number;
+  dc: number; dr: number;
+  progress: number; // 0..1 between current and next cell
+  color: string;
+  name: string;
+}
+
+interface DotState {
+  col: number; row: number;
+  eaten: boolean;
+  id: number;
+}
+
+const GHOST_CONFIGS = [
+  { color: "#ef4444", name: "Blinky" },
+  { color: "#22d3ee", name: "Inky" },
+  { color: "#f97316", name: "Clyde" },
+  { color: "#ec4899", name: "Pinky" },
+  { color: "#a855f7", name: "Sue" },
 ];
 
-/* Stars — static data (deterministik, tidak pakai Math.random) */
-const STAR_DATA = [
-  { id:0,  left:6.2,  top:12.4, size:1.1, color:"white",   dur:3.2, delay:0   },
-  { id:1,  left:17.4, top:4.8,  size:0.8, color:"white",   dur:4.1, delay:0.4 },
-  { id:2,  left:29.3, top:18.7, size:1.3, color:"#c4b5fd", dur:2.9, delay:0.8 },
-  { id:3,  left:42.6, top:7.1,  size:0.7, color:"white",   dur:3.7, delay:0.2 },
-  { id:4,  left:52.1, top:22.3, size:0.9, color:"white",   dur:5.0, delay:1.1 },
-  { id:5,  left:64.8, top:3.5,  size:1.0, color:"#93c5fd", dur:3.5, delay:0.6 },
-  { id:6,  left:76.3, top:14.9, size:0.8, color:"white",   dur:4.4, delay:1.4 },
-  { id:7,  left:87.9, top:8.2,  size:1.2, color:"white",   dur:3.9, delay:0.3 },
-  { id:8,  left:95.4, top:28.5, size:0.7, color:"#a5f3fc", dur:4.7, delay:0.9 },
-  { id:9,  left:10.3, top:42.1, size:0.9, color:"white",   dur:3.3, delay:1.7 },
-  { id:10, left:21.7, top:58.6, size:0.6, color:"white",   dur:4.0, delay:0.5 },
-  { id:11, left:34.9, top:73.2, size:1.1, color:"#c4b5fd", dur:3.6, delay:1.2 },
-  { id:12, left:47.0, top:86.4, size:0.8, color:"white",   dur:5.2, delay:0.1 },
-  { id:13, left:58.2, top:66.8, size:0.6, color:"white",   dur:4.2, delay:1.8 },
-  { id:14, left:69.4, top:51.3, size:1.0, color:"#93c5fd", dur:3.1, delay:0.7 },
-  { id:15, left:81.1, top:79.7, size:0.7, color:"white",   dur:4.8, delay:1.3 },
-  { id:16, left:92.6, top:44.0, size:0.9, color:"white",   dur:3.4, delay:0.2 },
-  { id:17, left:3.3,  top:34.6, size:0.8, color:"white",   dur:4.6, delay:0.8 },
-  { id:18, left:13.2, top:91.2, size:1.0, color:"#c4b5fd", dur:3.2, delay:1.5 },
-  { id:19, left:25.8, top:37.4, size:0.7, color:"white",   dur:4.0, delay:0.3 },
-  { id:20, left:89.0, top:62.1, size:1.1, color:"#a5f3fc", dur:3.3, delay:1.8 },
-  { id:21, left:97.2, top:17.3, size:0.8, color:"white",   dur:5.0, delay:0.5 },
-  { id:22, left:44.1, top:95.4, size:0.9, color:"white",   dur:3.8, delay:1.2 },
-  { id:23, left:72.6, top:88.3, size:1.0, color:"#c4b5fd", dur:4.3, delay:0.6 },
-  { id:24, left:55.0, top:47.9, size:0.7, color:"white",   dur:3.5, delay:1.0 },
-];
+const GHOST_SPEED = 0.045; // pelan — biar terlihat berjalan
+const PAC_SPEED   = 0.10;
+const DOT_RESPAWN_INTERVAL = 1800; // ms
+const MAX_DOTS = 55;
 
-const BALL_W = 56;
-const BALL_H = 68;
-
-interface Ripple { id: number; x: number; y: number; }
-
-/* ─── Tech Icons Physics Hero ─────────────────────────────────── */
-function TechIconsHero() {
-  const arenaRef = useRef<HTMLDivElement>(null);
-  const ballsRef = useRef<Ball[]>([]);
-  const animFrameRef = useRef<number>(0);
-  const [ripples, setRipples] = useState<Ripple[]>([]);
-  const rippleCounter = useRef(0);
-
-  /* Explosion on click */
-  const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!arenaRef.current) return;
-    const rect = arenaRef.current.getBoundingClientRect();
-    const cx = e.clientX - rect.left;
-    const cy = e.clientY - rect.top;
-
-    rippleCounter.current += 1;
-    const id = rippleCounter.current;
-    setRipples(prev => [...prev, { id, x: cx, y: cy }]);
-    setTimeout(() => setRipples(prev => prev.filter(r => r.id !== id)), 700);
-
-    ballsRef.current.forEach(b => {
-      const dx = b.x + BALL_W / 2 - cx;
-      const dy = b.y + BALL_H / 2 - cy;
-      const dist = Math.sqrt(dx * dx + dy * dy) || 1;
-      const force = Math.max(0, (180 - dist) / 180) * 6;
-      b.vx += (dx / dist) * force;
-      b.vy += (dy / dist) * force;
-    });
-  };
+function PacManHero() {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const stateRef  = useRef<{
+    pac: PacState;
+    ghosts: GhostState[];
+    dots: DotState[];
+    score: number;
+    dotCounter: number;
+    lastRespawn: number;
+  } | null>(null);
+  const animRef = useRef<number>(0);
+  const [score, setScore] = useState(0);
 
   useEffect(() => {
-    const arena = arenaRef.current;
-    if (!arena) return;
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
+    if (!ctx) return;
 
-    ballsRef.current.forEach(b => b.el.remove());
-    ballsRef.current = [];
+    const W = MAZE_COLS * CELL;
+    const H = MAZE_ROWS * CELL;
+    canvas.width  = W;
+    canvas.height = H;
 
-    const W = () => arena.offsetWidth;
-    const H = () => arena.offsetHeight;
+    // Initialize walkable cells for dots
+    const walkable = getWalkableCells();
 
-    /* Seed positions deterministically */
-    let seed = 7;
+    // Shuffle walkable deterministically
+    let seed = 42;
     const rng = () => { seed = (seed * 1664525 + 1013904223) & 0xffffffff; return (seed >>> 0) / 0xffffffff; };
+    const shuffled = [...walkable].sort(() => rng() - 0.5);
 
-    TECH_ICONS.forEach(icon => {
-      const el = document.createElement("div");
-      el.style.cssText = `position:absolute;width:${BALL_W}px;height:${BALL_H}px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;pointer-events:none;user-select:none;`;
-      el.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;">${icon.svg}</div><span style="font-size:9px;font-weight:500;color:rgba(255,255,255,0.6);letter-spacing:0.04em;white-space:nowrap;">${icon.name}</span>`;
-      arena.appendChild(el);
+    // Pac-Man starts at col 1, row 3
+    const pac: PacState = {
+      col: 1, row: 3,
+      px: 1 * CELL + CELL / 2,
+      py: 3 * CELL + CELL / 2,
+      dx: 1, dy: 0,
+      mouthOpen: 0.5,
+      mouthDir: 1,
+    };
 
-      const angle = rng() * Math.PI * 2;
-      const speed = 0.6 + rng() * 0.8;
-      ballsRef.current.push({
-        el,
-        color: icon.color,
-        x: rng() * Math.max(1, W() - BALL_W),
-        y: rng() * Math.max(1, H() - BALL_H),
-        vx: Math.cos(angle) * speed,
-        vy: Math.sin(angle) * speed,
-        rot: 0,
-        rotSpeed: (rng() - 0.5) * 0.8,
-        pulsePhase: rng() * Math.PI * 2,
-      });
+    // Ghosts start spread out
+    const ghostStarts = [
+      { col: 20, row: 1 }, { col: 20, row: 3 }, { col: 20, row: 5 },
+      { col: 20, row: 7 }, { col: 20, row: 9 },
+    ];
+    const ghosts: GhostState[] = GHOST_CONFIGS.map((cfg, i) => {
+      const sc = ghostStarts[i] ?? ghostStarts[0];
+      return {
+        col: sc.col, row: sc.row,
+        px: sc.col * CELL + CELL / 2,
+        py: sc.row * CELL + CELL / 2,
+        dc: i % 2 === 0 ? 1 : -1, dr: 0,
+        progress: 0,
+        color: cfg.color,
+        name: cfg.name,
+      };
     });
 
-    /* Physics loop */
-    const tick = (t: number) => {
-      const w = W();
-      const h = H();
-      const balls = ballsRef.current;
+    // Seed initial dots
+    const initCount = Math.min(MAX_DOTS, shuffled.length);
+    let dotCounter = 0;
+    const dots: DotState[] = shuffled.slice(0, initCount).map(c => ({
+      col: c.col, row: c.row, eaten: false, id: dotCounter++,
+    }));
 
-      balls.forEach((b, i) => {
-        b.x += b.vx;
-        b.y += b.vy;
-        b.vx *= 0.998;
-        b.vy *= 0.998;
+    stateRef.current = { pac, ghosts, dots, score: 0, dotCounter, lastRespawn: performance.now() };
 
-        const spd = Math.sqrt(b.vx * b.vx + b.vy * b.vy);
-        if (spd > 3) { b.vx = (b.vx / spd) * 3; b.vy = (b.vy / spd) * 3; }
-        if (spd < 0.3) { const a = Math.random() * Math.PI * 2; b.vx += Math.cos(a) * 0.1; b.vy += Math.sin(a) * 0.1; }
+    /* ── PAC-MAN MOVEMENT ── */
+    let pacTargetCol = pac.col + pac.dx;
+    let pacTargetRow = pac.row + pac.dy;
+    let pacProgress = 0; // 0..1
 
-        /* Wall bounce */
-        if (b.x < 0)          { b.x = 0;          b.vx =  Math.abs(b.vx); }
-        if (b.x > w - BALL_W) { b.x = w - BALL_W; b.vx = -Math.abs(b.vx); }
-        if (b.y < 0)          { b.y = 0;           b.vy =  Math.abs(b.vy); }
-        if (b.y > h - BALL_H) { b.y = h - BALL_H;  b.vy = -Math.abs(b.vy); }
+    function advancePac() {
+      const s = stateRef.current!;
+      const { pac } = s;
 
-        /* Ball-to-ball collision */
-        for (let j = i + 1; j < balls.length; j++) {
-          const o = balls[j];
-          const dx = (o.x + BALL_W / 2) - (b.x + BALL_W / 2);
-          const dy = (o.y + BALL_H / 2) - (b.y + BALL_H / 2);
-          const d = Math.sqrt(dx * dx + dy * dy);
-          const minD = BALL_W * 0.9;
-          if (d < minD && d > 0) {
-            const overlap = (minD - d) / 2;
-            const nx = dx / d, ny = dy / d;
-            b.x -= nx * overlap; b.y -= ny * overlap;
-            o.x += nx * overlap; o.y += ny * overlap;
-            const relVx = b.vx - o.vx, relVy = b.vy - o.vy;
-            const dot = relVx * nx + relVy * ny;
-            if (dot > 0) { b.vx -= dot * nx; b.vy -= dot * ny; o.vx += dot * nx; o.vy += dot * ny; }
-          }
+      pacProgress += PAC_SPEED;
+
+      // Animate mouth
+      pac.mouthOpen += pac.mouthDir * 0.07;
+      if (pac.mouthOpen >= 1) { pac.mouthOpen = 1; pac.mouthDir = -1; }
+      if (pac.mouthOpen <= 0.05) { pac.mouthOpen = 0.05; pac.mouthDir = 1; }
+
+      if (pacProgress >= 1) {
+        pacProgress -= 1;
+        // Arrived at target
+        pac.col = pacTargetCol;
+        pac.row = pacTargetRow;
+
+        // Eat dot at current cell
+        const dotIdx = s.dots.findIndex(d => !d.eaten && d.col === pac.col && d.row === pac.row);
+        if (dotIdx !== -1) {
+          s.dots[dotIdx].eaten = true;
+          s.score += 10;
+          setScore(s.score);
         }
 
-        b.rot += b.rotSpeed;
-        const glow = 6 + Math.sin(t * 0.002 + b.pulsePhase) * 4;
-        const svgEl = b.el.querySelector("svg") as SVGSVGElement | null;
-        if (svgEl) svgEl.style.filter = `drop-shadow(0 0 ${glow}px ${b.color})`;
-        b.el.style.transform = `translate(${b.x}px,${b.y}px) rotate(${b.rot}deg)`;
+        // Pick next cell — continue direction if possible, else turn
+        if (isWalkable(pac.col + pac.dx, pac.row + pac.dy)) {
+          pacTargetCol = pac.col + pac.dx;
+          pacTargetRow = pac.row + pac.dy;
+        } else {
+          // find any valid dir
+          const dirs = [
+            { dc: 1, dr: 0 }, { dc: -1, dr: 0 },
+            { dc: 0, dr: 1 }, { dc: 0, dr: -1 },
+          ].filter(d => !(d.dc === -pac.dx && d.dr === -pac.dy) && isWalkable(pac.col + d.dc, pac.row + d.dr));
+          if (dirs.length > 0) {
+            const d = dirs[Math.floor(Math.random() * dirs.length)];
+            pac.dx = d.dc; pac.dy = d.dr;
+            pacTargetCol = pac.col + d.dc;
+            pacTargetRow = pac.row + d.dr;
+          } else {
+            // reverse
+            pac.dx = -pac.dx; pac.dy = -pac.dy;
+            pacTargetCol = pac.col + pac.dx;
+            pacTargetRow = pac.row + pac.dy;
+          }
+        }
+      }
+
+      pac.px = (pac.col + (pacTargetCol - pac.col) * pacProgress) * CELL + CELL / 2;
+      pac.py = (pac.row + (pacTargetRow - pac.row) * pacProgress) * CELL + CELL / 2;
+    }
+
+    /* ── BFS: cari dot terdekat dan kembalikan arah langkah pertama ── */
+    function bfsToNearestDot(startCol: number, startRow: number): { dc: number; dr: number } | null {
+      const s = stateRef.current!;
+      const activeDots = s.dots.filter(d => !d.eaten);
+      if (activeDots.length === 0) return null;
+
+      // BFS
+      type Node = { col: number; row: number; firstDc: number; firstDr: number };
+      const visited = new Set<string>();
+      const queue: Node[] = [];
+
+      const dirs = [
+        { dc: 1, dr: 0 }, { dc: -1, dr: 0 },
+        { dc: 0, dr: 1 }, { dc: 0, dr: -1 },
+      ];
+
+      dirs.forEach(d => {
+        if (isWalkable(startCol + d.dc, startRow + d.dr)) {
+          queue.push({ col: startCol + d.dc, row: startRow + d.dr, firstDc: d.dc, firstDr: d.dr });
+          visited.add(`${startCol + d.dc},${startRow + d.dr}`);
+        }
       });
 
-      animFrameRef.current = requestAnimationFrame(tick);
+      visited.add(`${startCol},${startRow}`);
+
+      while (queue.length > 0) {
+        const cur = queue.shift()!;
+        // Cek apakah ada dot di sini
+        if (activeDots.some(d => d.col === cur.col && d.row === cur.row)) {
+          return { dc: cur.firstDc, dr: cur.firstDr };
+        }
+        dirs.forEach(d => {
+          const nc = cur.col + d.dc;
+          const nr = cur.row + d.dr;
+          const key = `${nc},${nr}`;
+          if (!visited.has(key) && isWalkable(nc, nr)) {
+            visited.add(key);
+            queue.push({ col: nc, row: nr, firstDc: cur.firstDc, firstDr: cur.firstDr });
+          }
+        });
+      }
+      return null;
+    }
+
+    /* ── GHOST MOVEMENT — BFS menuju dot hijau terdekat ── */
+    function advanceGhost(g: GhostState) {
+      g.progress += GHOST_SPEED;
+      if (g.progress >= 1) {
+        g.progress -= 1;
+        // Pindah ke sel berikutnya
+        g.col = g.col + g.dc;
+        g.row = g.row + g.dr;
+
+        // Gunakan BFS untuk mencari arah menuju dot terdekat
+        const best = bfsToNearestDot(g.col, g.row);
+        if (best) {
+          g.dc = best.dc;
+          g.dr = best.dr;
+        } else {
+          // Tidak ada dot — jalan random, jangan balik arah kecuali terpaksa
+          const dirs = [
+            { dc: 1, dr: 0 }, { dc: -1, dr: 0 },
+            { dc: 0, dr: 1 }, { dc: 0, dr: -1 },
+          ].filter(d => !(d.dc === -g.dc && d.dr === -g.dr) && isWalkable(g.col + d.dc, g.row + d.dr));
+          if (dirs.length > 0) {
+            const d = dirs[Math.floor(Math.random() * dirs.length)];
+            g.dc = d.dc; g.dr = d.dr;
+          } else {
+            g.dc = -g.dc; g.dr = -g.dr;
+          }
+        }
+      }
+      g.px = (g.col + g.dc * g.progress) * CELL + CELL / 2;
+      g.py = (g.row + g.dr * g.progress) * CELL + CELL / 2;
+    }
+
+    /* ── DOT RESPAWN ── */
+    function respawnDots(now: number) {
+      const s = stateRef.current!;
+      if (now - s.lastRespawn < DOT_RESPAWN_INTERVAL) return;
+      s.lastRespawn = now;
+
+      const active = s.dots.filter(d => !d.eaten).length;
+      if (active < MAX_DOTS) {
+        const occupied = new Set(s.dots.filter(d => !d.eaten).map(d => `${d.col},${d.row}`));
+        const candidates = walkable.filter(c => !occupied.has(`${c.col},${c.row}`));
+        const toAdd = Math.min(8, MAX_DOTS - active, candidates.length);
+        const picked = candidates.sort(() => Math.random() - 0.5).slice(0, toAdd);
+        picked.forEach(c => {
+          s.dots.push({ col: c.col, row: c.row, eaten: false, id: s.dotCounter++ });
+        });
+        // Keep array from growing unboundedly
+        s.dots = s.dots.filter(d => !d.eaten);
+      }
+    }
+
+    /* ── DRAW ── */
+    function draw(now: number) {
+      const s = stateRef.current!;
+      ctx.clearRect(0, 0, W, H);
+
+      // Background
+      ctx.fillStyle = "#0a0a18";
+      ctx.fillRect(0, 0, W, H);
+
+      // Draw maze walls
+      for (let r = 0; r < MAZE_ROWS; r++) {
+        for (let c = 0; c < MAZE_COLS; c++) {
+          if (MAZE_LAYOUT[r * MAZE_COLS + c] === 1) {
+            const x = c * CELL;
+            const y = r * CELL;
+            // Wall glow
+            ctx.fillStyle = "#0f172a";
+            ctx.fillRect(x, y, CELL, CELL);
+            ctx.strokeStyle = "rgba(255,255,255,0.15)";
+            ctx.lineWidth = 1;
+            ctx.strokeRect(x + 0.5, y + 0.5, CELL - 1, CELL - 1);
+          }
+        }
+      }
+
+      // Draw dots
+      s.dots.forEach(dot => {
+        if (dot.eaten) return;
+        const x = dot.col * CELL + CELL / 2;
+        const y = dot.row * CELL + CELL / 2;
+        const pulse = 0.7 + 0.3 * Math.sin(now * 0.003 + dot.id * 0.7);
+        ctx.beginPath();
+        ctx.arc(x, y, 3.5 * pulse, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(34, 197, 94, ${0.7 + 0.3 * pulse})`;
+        ctx.shadowColor = "#22c55e";
+        ctx.shadowBlur = 6 * pulse;
+        ctx.fill();
+        ctx.shadowBlur = 0;
+      });
+
+      // Draw Pac-Man
+      const pac = s.pac;
+      const angle = Math.atan2(pac.dy, pac.dx);
+      const mouthAngle = pac.mouthOpen * 0.4; // max ~0.4 rad ≈ 23°
+      ctx.beginPath();
+      ctx.moveTo(pac.px, pac.py);
+      ctx.arc(pac.px, pac.py, CELL * 0.44, angle + mouthAngle, angle + Math.PI * 2 - mouthAngle);
+      ctx.closePath();
+      ctx.fillStyle = "#facc15";
+      ctx.shadowColor = "#fbbf24";
+      ctx.shadowBlur = 12;
+      ctx.fill();
+      ctx.shadowBlur = 0;
+
+      // Draw ghosts
+      s.ghosts.forEach(g => {
+        const x = g.px;
+        const y = g.py;
+        const r = CELL * 0.42;
+        const glow = 8 + 4 * Math.sin(now * 0.004 + g.px);
+
+        ctx.shadowColor = g.color;
+        ctx.shadowBlur = glow;
+
+        // Ghost body
+        ctx.beginPath();
+        ctx.arc(x, y - r * 0.1, r, Math.PI, 0);
+        // Wavy bottom
+        const waveSegs = 4;
+        const segW = (r * 2) / waveSegs;
+        for (let i = 0; i < waveSegs; i++) {
+          const cx1 = (x - r) + segW * (i + 0.25);
+          const cx2 = (x - r) + segW * (i + 0.75);
+          const topY = y - r * 0.1 + r;
+          const botY = topY + r * 0.35;
+          const endX = (x - r) + segW * (i + 1);
+          const endY = i % 2 === 0 ? botY : topY;
+          ctx.quadraticCurveTo(cx1, i % 2 === 0 ? topY : botY, (x - r) + segW * (i + 0.5), endY);
+          ctx.quadraticCurveTo(cx2, endY, endX, topY);
+        }
+        ctx.closePath();
+        ctx.fillStyle = g.color;
+        ctx.fill();
+
+        // Eyes
+        ctx.shadowBlur = 0;
+        [[-r * 0.35, -r * 0.25], [r * 0.35, -r * 0.25]].forEach(([ox, oy]) => {
+          ctx.beginPath();
+          ctx.arc(x + ox, y + oy - r * 0.1, r * 0.2, 0, Math.PI * 2);
+          ctx.fillStyle = "white";
+          ctx.fill();
+          ctx.beginPath();
+          ctx.arc(x + ox + g.dc * r * 0.08, y + oy + g.dr * r * 0.08 - r * 0.1, r * 0.1, 0, Math.PI * 2);
+          ctx.fillStyle = "#1e3a8a";
+          ctx.fill();
+        });
+      });
+
+      ctx.shadowBlur = 0;
+    }
+
+    /* ── GAME LOOP ── */
+    let lastTime = 0;
+    const loop = (now: number) => {
+      const dt = now - lastTime;
+      lastTime = now;
+      if (dt > 0 && dt < 100) {
+        advancePac();
+        stateRef.current!.ghosts.forEach(advanceGhost);
+        respawnDots(now);
+      }
+      draw(now);
+      animRef.current = requestAnimationFrame(loop);
     };
 
-    animFrameRef.current = requestAnimationFrame(tick);
-    return () => {
-      cancelAnimationFrame(animFrameRef.current);
-      ballsRef.current.forEach(b => b.el.remove());
-      ballsRef.current = [];
-    };
+    animRef.current = requestAnimationFrame(loop);
+    return () => cancelAnimationFrame(animRef.current);
   }, []);
 
+  const W = MAZE_COLS * CELL;
+  const H = MAZE_ROWS * CELL;
+
   return (
-    <section className="relative max-w-5xl mx-auto py-16" style={{ minHeight: 520 }}>
-      {/* ── Physics Arena (background layer) ── */}
+    <section className="relative max-w-5xl mx-auto py-8">
+      {/* Game container */}
       <div
-        ref={arenaRef}
-        onClick={handleClick}
-        className="absolute inset-0 rounded-3xl overflow-hidden cursor-crosshair"
-        style={{ background: "radial-gradient(ellipse 140% 100% at 50% 50%, #09061e 0%, #04040f 55%, #020208 100%)" }}
-      >
-        {/* Nebula clouds */}
-        <motion.div
-          className="absolute inset-0 pointer-events-none"
-          animate={{ opacity: [0.5, 0.75, 0.5] }}
-          transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
-        >
-          <div className="absolute rounded-full" style={{ left: "-5%", top: "-10%", width: "55%", height: "65%", background: "radial-gradient(ellipse, rgba(139,92,246,.12) 0%, transparent 65%)" }} />
-          <div className="absolute rounded-full" style={{ right: "-5%", top: "5%", width: "45%", height: "55%", background: "radial-gradient(ellipse, rgba(59,130,246,.09) 0%, transparent 65%)" }} />
-          <div className="absolute rounded-full" style={{ left: "30%", bottom: "-5%", width: "50%", height: "50%", background: "radial-gradient(ellipse, rgba(6,182,212,.07) 0%, transparent 65%)" }} />
-        </motion.div>
-
-        {/* Stars */}
-        {STAR_DATA.map(s => (
-          <motion.div
-            key={s.id}
-            className="absolute rounded-full pointer-events-none"
-            style={{ left: `${s.left}%`, top: `${s.top}%`, width: s.size, height: s.size, background: s.color }}
-            animate={{ opacity: [s.size * 0.1, s.size * 0.7, s.size * 0.1] }}
-            transition={{ duration: s.dur, delay: s.delay, repeat: Infinity }}
-          />
-        ))}
-
-        {/* Click ripples */}
-        <AnimatePresence>
-          {ripples.map(r => (
-            <motion.div
-              key={r.id}
-              className="absolute rounded-full pointer-events-none"
-              style={{ left: r.x - 20, top: r.y - 20, width: 40, height: 40, border: "2px solid rgba(167,139,250,0.7)" }}
-              initial={{ scale: 1, opacity: 0.8 }}
-              animate={{ scale: 5, opacity: 0 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.6, ease: "easeOut" }}
-            />
-          ))}
-        </AnimatePresence>
-      </div>
-
-      {/* ── Hero Text (foreground, centered) ── */}
-      <div
+        className="relative rounded-3xl overflow-hidden"
         style={{
-          position: "relative",
-          zIndex: 10,
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          textAlign: "center",
-          minHeight: 520,
-          padding: "0 40px",
-          gap: 16,
-          pointerEvents: "none",
+          background: "#060614",
+          boxShadow: "0 0 0 1px rgba(167,139,250,0.2), 0 0 60px -10px rgba(139,92,246,0.3)",
         }}
       >
-        {/* Badge */}
-        <motion.span
-          initial={{ opacity: 0, y: 10 }}
-          animate={{
-            opacity: 1,
-            y: 0,
-            boxShadow: [
-              "0 0 0 0px rgba(139,92,246,.5)",
-              "0 0 0 8px rgba(139,92,246,0)",
-              "0 0 0 0px rgba(139,92,246,0)",
-            ],
-          }}
-          transition={{
-            opacity: { duration: 0.4 },
-            y: { duration: 0.4 },
-            boxShadow: { duration: 2.5, repeat: Infinity, delay: 0.5 },
-          }}
-          className="pill"
-          style={{ display: "inline-flex", alignItems: "center", gap: 8 }}
+        {/* Score badge */}
+        <div
+          className="absolute top-3 right-4 z-20 flex items-center gap-2"
+          style={{ pointerEvents: "none" }}
         >
-          <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#a78bfa", boxShadow: "0 0 8px #a78bfa", display: "inline-block" }} />
-          About Me
-        </motion.span>
-
-        {/* Heading */}
-        <motion.h1
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          style={{ margin: 0, fontSize: "clamp(28px, 5vw, 52px)", fontWeight: 700, lineHeight: 1.15, letterSpacing: "-0.02em", color: "white" }}
-        >
-          Building{" "}
           <motion.span
-            style={{ background: "linear-gradient(135deg, #a78bfa 0%, #60a5fa 50%, #22d3ee 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}
-            animate={{ textShadow: ["0 0 40px rgba(139,92,246,.4)", "0 0 80px rgba(139,92,246,.8)", "0 0 40px rgba(139,92,246,.4)"] }}
-            transition={{ duration: 4, repeat: Infinity }}
+            className="pill"
+            style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 11 }}
+            animate={{ boxShadow: ["0 0 0 0px rgba(250,204,21,.4)", "0 0 0 6px rgba(250,204,21,0)", "0 0 0 0px rgba(250,204,21,0)"] }}
+            transition={{ duration: 2, repeat: Infinity }}
           >
-            Modern Digital
-          </motion.span>{" "}
-          Experiences
-        </motion.h1>
+            <span style={{ fontSize: 14 }}>🟡</span>
+            <span style={{ color: "#facc15", fontWeight: 700 }}>Score: {score}</span>
+          </motion.span>
+        </div>
 
-        {/* Subtitle */}
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.3 }}
-          style={{ margin: 0, fontSize: 15, color: "rgba(200,200,235,.65)", maxWidth: 440, lineHeight: 1.7 }}
+        {/* Badge overlay */}
+        <div
+          className="absolute top-3 left-4 z-20"
+          style={{ pointerEvents: "none" }}
         >
-          Full-Stack Web Developer passionate about creating scalable and user-friendly applications.
-        </motion.p>
+          <motion.span
+            className="pill"
+            style={{ display: "inline-flex", alignItems: "center", gap: 8 }}
+            animate={{
+              boxShadow: [
+                "0 0 0 0px rgba(139,92,246,.5)",
+                "0 0 0 8px rgba(139,92,246,0)",
+                "0 0 0 0px rgba(139,92,246,0)",
+              ],
+            }}
+            transition={{ duration: 2.5, repeat: Infinity }}
+          >
+            <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#a78bfa", boxShadow: "0 0 8px #a78bfa", display: "inline-block" }} />
+            About Me
+          </motion.span>
+        </div>
 
-        {/* Scroll hint */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 0.45 }}
-          transition={{ delay: 0.6 }}
-          style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4, marginTop: 8 }}
-        >
-          <motion.div
-            style={{ width: 1, height: 28, background: "linear-gradient(to bottom, transparent, rgba(167,139,250,.9))" }}
-            animate={{ scaleY: [0.6, 1, 0.6] }}
-            transition={{ duration: 1.8, repeat: Infinity }}
-          />
-          <span style={{ fontSize: 10, color: "#a78bfa", letterSpacing: "0.12em" }}>scroll</span>
-        </motion.div>
+        {/* Canvas */}
+        <canvas
+          ref={canvasRef}
+          style={{
+            display: "block",
+            width: "100%",
+            height: "auto",
+            imageRendering: "pixelated",
+          }}
+          width={W}
+          height={H}
+          aria-label="Pac-Man game"
+        />
       </div>
+
+      {/* Ghost legend */}
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.6 }}
+        className="flex flex-wrap justify-center gap-3 mt-4"
+      >
+        {GHOST_CONFIGS.map(g => (
+          <span
+            key={g.name}
+            className="pill !text-[11px] flex items-center gap-1.5"
+            style={{ borderColor: `${g.color}50`, background: `${g.color}12` }}
+          >
+            <span style={{ width: 8, height: 8, borderRadius: "50%", background: g.color, display: "inline-block", boxShadow: `0 0 6px ${g.color}` }} />
+            <span style={{ color: g.color }}>{g.name}</span>
+          </span>
+        ))}
+        <span className="pill !text-[11px] flex items-center gap-1.5" style={{ borderColor: "#22c55e50", background: "#22c55e12" }}>
+          <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#22c55e", display: "inline-block", boxShadow: "0 0 6px #22c55e" }} />
+          <span style={{ color: "#22c55e" }}>Dots</span>
+        </span>
+      </motion.div>
     </section>
   );
 }
-
 /* ═══════════════════════════════════════════════════════════════
-   END TECH ICONS PHYSICS HERO
+   END PAC-MAN HERO GAME
    ═══════════════════════════════════════════════════════════════ */
 
 /* ─── Stat Button (About) — wiggle + ripple + glow ────────────── */
@@ -1230,9 +1355,9 @@ function AboutPage() {
         initial="hidden"
         animate="visible"
       >
-        {/* ── 1. Hero — tech icons physics + hero text ── */}
+        {/* ── 1. Hero — Pac-Man game ── */}
         <motion.div variants={sectionVariant}>
-          <TechIconsHero />
+          <PacManHero />
         </motion.div>
 
         {/* ── 2. Profile / Tentang Saya ── */}
