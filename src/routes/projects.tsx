@@ -2,6 +2,9 @@ import { createFileRoute } from "@tanstack/react-router";
 import { motion, AnimatePresence, type Variants } from "framer-motion";
 import { useState, useRef } from "react";
 import { Search, X, ExternalLink, Github, ArrowUpRight } from "lucide-react";
+import plnGalesongPdf from "../assets/Projek/APLIKASI PLN GALESONG.pdf";
+import sistemPenilaianPdf from "../assets/Projek/Sistem Penilaian Akademik.pdf";
+import absensiMagangPdf from "../assets/Projek/Aplikasi absensi mahasiswa magang.pdf";
 
 export const Route = createFileRoute("/projects")({
   head: () => ({
@@ -22,6 +25,9 @@ const projects = [
     stack: ["Next.js", "Tailwind"],
     accent: "oklch(0.75 0.2 230)",
     accent2: "oklch(0.65 0.25 290)",
+    pdfFile: undefined as string | undefined,
+    githubUrl: undefined as string | undefined,
+    viewUrl: undefined as string | undefined,
   },
   {
     title: "Web Portfolio V1",
@@ -31,24 +37,33 @@ const projects = [
     stack: ["React", "Tailwind"],
     accent: "oklch(0.7 0.25 290)",
     accent2: "oklch(0.75 0.2 330)",
+    pdfFile: undefined as string | undefined,
+    githubUrl: undefined as string | undefined,
+    viewUrl: undefined as string | undefined,
   },
   {
-    title: "Organize Website DCC",
+    title: "Sistem Prediksi Kegiatan PLN Galesong",
     cat: "Web App",
     isNew: true,
-    desc: "Internal organization management system for Dicoding Community Chapter.",
-    stack: ["Laravel", "MySQL"],
+    desc: "Sistem prediksi kegiatan PLN Galesong berbasis web untuk manajemen dan monitoring kegiatan operasional secara efisien.",
+    stack: ["Laravel", "MySQL", "CSS", "JavaScript", "PHP", "HTML"],
     accent: "oklch(0.65 0.25 25)",
     accent2: "oklch(0.75 0.2 60)",
+    pdfFile: plnGalesongPdf,
+    githubUrl: "https://github.com/hairilikhsan17/sistemplngalesong.git",
+    viewUrl: plnGalesongPdf,
   },
   {
-    title: "Laundry Apps",
+    title: "Sistem Penilaian Akademik",
     cat: "Web App",
     isNew: true,
-    desc: "Laundry management with real-time order tracking and customer portal.",
-    stack: ["Laravel", "React", "Oracle", "Docker"],
+    desc: "Sistem penilaian akademik berbasis web untuk pengelolaan nilai, pelaporan, dan monitoring prestasi mahasiswa secara terpadu.",
+    stack: ["Laravel", "MySQL", "CSS", "JavaScript", "HTML", "PHP"],
     accent: "oklch(0.75 0.2 180)",
     accent2: "oklch(0.7 0.2 230)",
+    pdfFile: sistemPenilaianPdf,
+    githubUrl: "https://github.com/hairilikhsan17/tg8_penilaian_akademik.git",
+    viewUrl: sistemPenilaianPdf,
   },
   {
     title: "petShop Regression",
@@ -58,6 +73,9 @@ const projects = [
     stack: ["Python", "Next.js"],
     accent: "oklch(0.8 0.18 95)",
     accent2: "oklch(0.75 0.2 130)",
+    pdfFile: undefined as string | undefined,
+    githubUrl: undefined as string | undefined,
+    viewUrl: undefined as string | undefined,
   },
   {
     title: "Portfolio V2",
@@ -67,6 +85,9 @@ const projects = [
     stack: ["React", "Framer Motion"],
     accent: "oklch(0.7 0.25 290)",
     accent2: "oklch(0.75 0.2 230)",
+    pdfFile: undefined as string | undefined,
+    githubUrl: undefined as string | undefined,
+    viewUrl: undefined as string | undefined,
   },
   {
     title: "Dicoding UNDIPA",
@@ -76,15 +97,21 @@ const projects = [
     stack: ["Laravel", "Tailwind"],
     accent: "oklch(0.65 0.25 330)",
     accent2: "oklch(0.7 0.25 290)",
+    pdfFile: undefined as string | undefined,
+    githubUrl: undefined as string | undefined,
+    viewUrl: undefined as string | undefined,
   },
   {
-    title: "Dipatalent",
+    title: "Sistem Absensi Mahasiswa Magang",
     cat: "Web App",
-    isNew: false,
-    desc: "Achievement management system for tracking student accomplishments.",
-    stack: ["Laravel", "MySQL"],
+    isNew: true,
+    desc: "Aplikasi absensi mahasiswa magang berbasis web untuk pencatatan kehadiran, monitoring aktivitas, dan pelaporan secara digital.",
+    stack: ["Native", "MySQL", "PHP", "CSS", "JavaScript", "HTML"],
     accent: "oklch(0.75 0.2 200)",
     accent2: "oklch(0.7 0.2 230)",
+    pdfFile: absensiMagangPdf,
+    githubUrl: "https://github.com/hairilikhsan17/absensimahasiswamagang.git",
+    viewUrl: absensiMagangPdf,
   },
   {
     title: "Monitoring Keuangan",
@@ -94,6 +121,9 @@ const projects = [
     stack: ["Next.js", "Tailwind"],
     accent: "oklch(0.7 0.2 150)",
     accent2: "oklch(0.75 0.18 180)",
+    pdfFile: undefined as string | undefined,
+    githubUrl: undefined as string | undefined,
+    viewUrl: undefined as string | undefined,
   },
   {
     title: "Teman Bus",
@@ -103,6 +133,9 @@ const projects = [
     stack: ["React Native"],
     accent: "oklch(0.75 0.2 60)",
     accent2: "oklch(0.7 0.22 30)",
+    pdfFile: undefined as string | undefined,
+    githubUrl: undefined as string | undefined,
+    viewUrl: undefined as string | undefined,
   },
 ];
 
@@ -202,20 +235,32 @@ function ProjectCard({
           background: `linear-gradient(135deg, color-mix(in oklab,${p.accent} 40%,transparent), color-mix(in oklab,${p.accent2} 40%,transparent))`,
         }}
       >
-        {/* Shimmer on hover */}
-        <motion.div
-          animate={hovered ? { x: ["-100%", "200%"] } : { x: "-100%" }}
-          transition={{ duration: 1.0, ease: "linear" }}
-          className="absolute inset-0 w-1/3 bg-white/15 skew-x-12 blur-sm pointer-events-none"
-        />
-        {/* Big letter */}
-        <motion.div
-          animate={hovered ? { scale: 1.15, opacity: 0.45 } : { scale: 1, opacity: 0.25 }}
-          transition={{ duration: 0.4 }}
-          className="absolute inset-0 flex items-center justify-center text-7xl font-black text-white select-none"
-        >
-          {p.title.charAt(0)}
-        </motion.div>
+        {p.pdfFile ? (
+          /* PDF preview rendered via iframe */
+          <iframe
+            src={`${p.pdfFile}#toolbar=0&navpanes=0&scrollbar=0&view=FitH`}
+            className="w-full h-full rounded-2xl pointer-events-none"
+            title={p.title}
+            style={{ border: "none", background: "white" }}
+          />
+        ) : (
+          <>
+            {/* Shimmer on hover */}
+            <motion.div
+              animate={hovered ? { x: ["-100%", "200%"] } : { x: "-100%" }}
+              transition={{ duration: 1.0, ease: "linear" }}
+              className="absolute inset-0 w-1/3 bg-white/15 skew-x-12 blur-sm pointer-events-none"
+            />
+            {/* Big letter */}
+            <motion.div
+              animate={hovered ? { scale: 1.15, opacity: 0.45 } : { scale: 1, opacity: 0.25 }}
+              transition={{ duration: 0.4 }}
+              className="absolute inset-0 flex items-center justify-center text-7xl font-black text-white select-none"
+            >
+              {p.title.charAt(0)}
+            </motion.div>
+          </>
+        )}
         {/* Arrow icon on hover */}
         <AnimatePresence>
           {hovered && (
@@ -224,7 +269,7 @@ function ProjectCard({
               animate={{ opacity: 1, scale: 1, rotate: 0 }}
               exit={{ opacity: 0, scale: 0.5 }}
               transition={{ type: "spring", stiffness: 400 }}
-              className="absolute bottom-3 right-3 w-8 h-8 rounded-full flex items-center justify-center"
+              className="absolute bottom-3 right-3 w-8 h-8 rounded-full flex items-center justify-center z-10"
               style={{ background: `color-mix(in oklab, ${p.accent} 60%, transparent)` }}
             >
               <ArrowUpRight size={14} className="text-white" />
@@ -606,14 +651,25 @@ function ProjectsPage() {
                   background: `linear-gradient(135deg, color-mix(in oklab,${open.accent} 60%,transparent), color-mix(in oklab,${open.accent2} 60%,transparent))`,
                 }}
               >
-                <motion.div
-                  animate={{ x: ["-100%", "200%"] }}
-                  transition={{ duration: 2, repeat: Infinity, ease: "linear", repeatDelay: 0.8 }}
-                  className="absolute inset-0 w-1/3 bg-white/20 skew-x-12 blur-sm"
-                />
-                <span className="text-8xl font-black text-white/30 select-none">
-                  {open.title.charAt(0)}
-                </span>
+                {open.pdfFile ? (
+                  <iframe
+                    src={`${open.pdfFile}#toolbar=0&navpanes=0&scrollbar=0&view=FitH`}
+                    className="w-full h-full rounded-2xl"
+                    title={open.title}
+                    style={{ border: "none", background: "white", minHeight: 240 }}
+                  />
+                ) : (
+                  <>
+                    <motion.div
+                      animate={{ x: ["-100%", "200%"] }}
+                      transition={{ duration: 2, repeat: Infinity, ease: "linear", repeatDelay: 0.8 }}
+                      className="absolute inset-0 w-1/3 bg-white/20 skew-x-12 blur-sm"
+                    />
+                    <span className="text-8xl font-black text-white/30 select-none">
+                      {open.title.charAt(0)}
+                    </span>
+                  </>
+                )}
               </motion.div>
 
               <span className="pill">{open.cat}</span>
@@ -652,18 +708,36 @@ function ProjectsPage() {
 
               {/* Source + Visit Project sejajar, Close di bawah full width */}
               <div className="flex gap-2 mt-6">
-                <a
-                  href="#"
-                  className="btn-primary flex-1 justify-center"
-                  style={{
-                    background: `linear-gradient(120deg, ${open.accent}, ${open.accent2})`,
-                  }}
-                >
-                  <Github size={14} /> Source
-                </a>
-                <a href="#" className="btn-primary flex-1 justify-center">
-                  Visit Project <ExternalLink size={14} />
-                </a>
+                {open.githubUrl ? (
+                  <a
+                    href={open.githubUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn-primary flex-1 justify-center"
+                    style={{ background: `linear-gradient(120deg, ${open.accent}, ${open.accent2})` }}
+                  >
+                    <Github size={14} /> Source
+                  </a>
+                ) : (
+                  <button disabled className="btn-primary flex-1 justify-center opacity-40 cursor-not-allowed"
+                    style={{ background: `linear-gradient(120deg, ${open.accent}, ${open.accent2})` }}>
+                    <Github size={14} /> Source
+                  </button>
+                )}
+                {open.viewUrl ? (
+                  <a
+                    href={open.viewUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn-primary flex-1 justify-center"
+                  >
+                    Visit Project <ExternalLink size={14} />
+                  </a>
+                ) : (
+                  <button disabled className="btn-primary flex-1 justify-center opacity-40 cursor-not-allowed">
+                    Visit Project <ExternalLink size={14} />
+                  </button>
+                )}
               </div>
               <button onClick={() => setOpen(null)} className="btn-ghost w-full justify-center mt-2">
                 <X size={14} /> Close
