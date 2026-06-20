@@ -11,6 +11,10 @@ import { FaAws } from "react-icons/fa";
 import { GithubContributions } from "../components/GithubContributions";
 import { useIsMobile } from "../hooks/use-mobile";
 import profile from "../assets/profile.png";
+import portfolio02Pdf from "../assets/Projek/PORTFOLIO 02.pdf";
+import plnGalesongPdf from "../assets/Projek/APLIKASI PLN GALESONG.pdf";
+import kebiasaanCerdasPdf from "../assets/Projek/Aplikasi Kebiasaan Cerdas.pdf";
+import cvPdf from "../assets/CV/CV_Hairil Ikhsan.pdf";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -64,6 +68,7 @@ const TYPING_PHRASES = [
   "Next.js Developer",
   "Laravel Developer",
   "Cloud Enthusiast",
+  "Ahli K3 Umum",
 ];
 
 function useTypingEffect(phrases: string[], typeSpeed = 60, eraseSpeed = 35, pauseMs = 1800) {
@@ -350,18 +355,17 @@ function TagPill({ label, color, color2, index }: {
 
 /* ─── Social links ───────────────────────────────────────────── */
 const socials = [
-  { Icon: Github,   label: "GitHub",    color: "#ffffff", href: "#" },
-  { Icon: Linkedin, label: "LinkedIn",  color: "#0A66C2", href: "#" },
-  { Icon: Mail,     label: "Email",     color: "#a855f7", href: "#" },
-  { Icon: Instagram,label: "Instagram", color: "#E4405F", href: "#" },
+  { Icon: Github,   label: "GitHub",    color: "#ffffff", href: "https://github.com/hairilikhsan17" },
+  { Icon: Linkedin, label: "LinkedIn",  color: "#0A66C2", href: "https://www.linkedin.com/in/hairil-ikhsan-688709404" },
+  { Icon: Mail,     label: "Email",     color: "#a855f7", href: "mailto:hairilikhsan17@gmail.com" },
+  { Icon: Instagram,label: "Instagram", color: "#E4405F", href: "https://www.instagram.com/hairilikhsan17?igsh=bXBrYmt3cnRvMWt2" },
 ];
 
 /* ─── Featured Project Card — per-project accent color on hover ── */
 function FeaturedProjectCard({ p, i }: { p: typeof featured[number]; i: number }) {
   const [hovered, setHovered] = useState(false);
   return (
-    <motion.a
-      href="/projects"
+    <motion.div
       initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-60px" }}
@@ -399,27 +403,38 @@ function FeaturedProjectCard({ p, i }: { p: typeof featured[number]; i: number }
         )}
       </AnimatePresence>
 
-      {/* Thumbnail */}
+      {/* Thumbnail — scrollable PDF preview */}
       <div
-        className="aspect-video md:aspect-auto rounded-2xl relative overflow-hidden"
+        className="aspect-video md:aspect-auto rounded-2xl relative overflow-y-auto"
         style={{
           background: `linear-gradient(135deg, color-mix(in oklab,${p.accent} 45%,transparent), color-mix(in oklab,${p.accent2} 45%,transparent))`,
           minHeight: 140,
         }}
       >
-        {/* Shimmer */}
-        <motion.div
-          animate={hovered ? { x: ["-100%", "200%"] } : { x: "-100%" }}
-          transition={{ duration: 1.1, ease: "linear" }}
-          className="absolute inset-0 w-1/3 bg-white/15 skew-x-12 blur-sm pointer-events-none"
-        />
-        <motion.div
-          animate={hovered ? { scale: 1.15, opacity: 0.4 } : { scale: 1, opacity: 0.2 }}
-          transition={{ duration: 0.4 }}
-          className="absolute inset-0 flex items-center justify-center text-7xl font-black text-white select-none"
-        >
-          {p.title.charAt(0)}
-        </motion.div>
+        {p.pdfFile ? (
+          <iframe
+            src={`${p.pdfFile}#toolbar=0&navpanes=0&scrollbar=1&view=FitH`}
+            className="w-full rounded-2xl"
+            title={p.title}
+            style={{ border: "none", background: "white", height: "100%", minHeight: 220 }}
+          />
+        ) : (
+          <>
+            {/* Shimmer */}
+            <motion.div
+              animate={hovered ? { x: ["-100%", "200%"] } : { x: "-100%" }}
+              transition={{ duration: 1.1, ease: "linear" }}
+              className="absolute inset-0 w-1/3 bg-white/15 skew-x-12 blur-sm pointer-events-none"
+            />
+            <motion.div
+              animate={hovered ? { scale: 1.15, opacity: 0.4 } : { scale: 1, opacity: 0.2 }}
+              transition={{ duration: 0.4 }}
+              className="absolute inset-0 flex items-center justify-center text-7xl font-black text-white select-none"
+            >
+              {p.title.charAt(0)}
+            </motion.div>
+          </>
+        )}
       </div>
 
       {/* Content */}
@@ -459,19 +474,28 @@ function FeaturedProjectCard({ p, i }: { p: typeof featured[number]; i: number }
             </span>
           ))}
         </div>
-        <motion.span
-          className="mt-4 inline-flex items-center gap-1 text-sm font-semibold"
-          style={hovered ? {
-            background: `linear-gradient(120deg, ${p.accent}, ${p.accent2})`,
-            WebkitBackgroundClip: "text",
-            WebkitTextFillColor: "transparent",
-            backgroundClip: "text",
-          } : { color: "var(--neon)" }}
-          animate={hovered ? { x: 4 } : { x: 0 }}
-          transition={{ type: "spring", stiffness: 300 }}
+        <motion.a
+          href={p.pdfFile ?? "/projects"}
+          target={p.pdfFile ? "_blank" : undefined}
+          rel={p.pdfFile ? "noopener noreferrer" : undefined}
+          className="mt-5 inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-300 w-fit"
+          style={{
+            background: hovered
+              ? `linear-gradient(120deg, ${p.accent}, ${p.accent2})`
+              : "color-mix(in oklab, var(--neon) 8%, transparent)",
+            border: hovered
+              ? "1px solid transparent"
+              : "1px solid color-mix(in oklab, var(--neon) 20%, transparent)",
+            color: hovered ? "#ffffff" : "var(--foreground)",
+            boxShadow: hovered
+              ? `0 4px 20px -4px color-mix(in oklab, ${p.accent} 50%, transparent)`
+              : "none",
+          }}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.98 }}
         >
-          View Project <ArrowRight size={14} />
-        </motion.span>
+          View Project <ArrowRight size={14} className="transition-transform duration-300" style={{ transform: hovered ? "translateX(2px)" : "none" }} />
+        </motion.a>
       </div>
 
       {/* Bottom accent line */}
@@ -481,7 +505,7 @@ function FeaturedProjectCard({ p, i }: { p: typeof featured[number]; i: number }
         className="absolute bottom-0 left-0 right-0 h-0.5 origin-left"
         style={{ background: `linear-gradient(90deg, ${p.accent}, ${p.accent2})` }}
       />
-    </motion.a>
+    </motion.div>
   );
 }
 
@@ -923,7 +947,9 @@ function HomePage() {
           >
             <ParticleBurst count={8} radius={30} className="inline-flex">
               <motion.a
-                href="#"
+                href={cvPdf}
+                target="_blank"
+                rel="noopener noreferrer"
                 whileHover={{ scale: 1.05, y: -2 }}
                 whileTap={{ scale: 0.97 }}
                 className="btn-primary"
@@ -933,7 +959,7 @@ function HomePage() {
             </ParticleBurst>
             <ParticleBurst count={8} radius={30} className="inline-flex">
               <motion.a
-                href="#"
+                href="mailto:hairilikhsan17@gmail.com"
                 whileHover={{ scale: 1.05, y: -2 }}
                 whileTap={{ scale: 0.97 }}
                 className="btn-ghost"
@@ -1074,27 +1100,30 @@ export function Section({ title, badge, subtitle, children }: {
 
 const featured = [
   {
-    title: "AI Dashboard Platform",
+    title: "Sistem Kebiasaan Cerdas (My Habit)",
     category: "AI · Dashboard",
-    desc: "Real-time analytics dashboard powered by machine learning for actionable insights.",
-    stack: ["Next.js", "Python", "TensorFlow", "Tailwind"],
+    desc: "Smart habit management platform designed to help users build positive routines and achieve their monthly goals through an interactive dashboard.",
+    stack: ["Supabase", "TanStack Start", "Vite", "Cloudflare", "React", "Tailwind CSS"],
     accent: "oklch(0.7 0.25 290)",
     accent2: "oklch(0.75 0.2 230)",
+    pdfFile: kebiasaanCerdasPdf,
   },
   {
-    title: "DCI UNDIPA Website",
+    title: "Penelitian Projek Skripsi Universitas Dipa Makassar",
     category: "Community",
-    desc: "Community organization website for the Dicoding Indonesia UNDIPA chapter.",
-    stack: ["Laravel", "MySQL", "Tailwind"],
+    desc: "Web-based prediction system developed to estimate activity completion time and support operational planning at PLN Galesong.",
+    stack: ["Laravel", "MySQL", "Tailwind CSS", "PHP", "JavaScript", "Bootstrap", "HTML"],
     accent: "oklch(0.65 0.25 25)",
     accent2: "oklch(0.75 0.2 60)",
+    pdfFile: plnGalesongPdf,
   },
   {
-    title: "Modern Portfolio Website",
-    category: "Personal",
-    desc: "Premium developer portfolio with motion design and glassmorphism UI.",
-    stack: ["React", "Framer Motion", "Tailwind"],
+    title: "Portfolio 02",
+    category: "Personal · Portfolio 02",
+    desc: "Premium developer portfolio designed with modern motion effects and glassmorphism UI to showcase projects in an elegant and interactive way.",
+    stack: ["React", "Framer Motion", "Tailwind CSS", "TanStack Start"],
     accent: "oklch(0.75 0.2 180)",
     accent2: "oklch(0.7 0.2 230)",
+    pdfFile: portfolio02Pdf,
   },
 ];

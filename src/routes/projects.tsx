@@ -5,6 +5,9 @@ import { Search, X, ExternalLink, Github, ArrowUpRight } from "lucide-react";
 import plnGalesongPdf from "../assets/Projek/APLIKASI PLN GALESONG.pdf";
 import sistemPenilaianPdf from "../assets/Projek/Sistem Penilaian Akademik.pdf";
 import absensiMagangPdf from "../assets/Projek/Aplikasi absensi mahasiswa magang.pdf";
+import kebiasaanCerdasPdf from "../assets/Projek/Aplikasi Kebiasaan Cerdas.pdf";
+import portfolio01Pdf from "../assets/Projek/PORTFOLIO 01.pdf";
+import portfolio02Pdf from "../assets/Projek/PORTFOLIO 02.pdf";
 
 export const Route = createFileRoute("/projects")({
   head: () => ({
@@ -30,16 +33,16 @@ const projects = [
     viewUrl: undefined as string | undefined,
   },
   {
-    title: "Web Portfolio V1",
+    title: "Web Portfolio 01",
     cat: "UI/UX",
     isNew: false,
     desc: "First version of a developer portfolio with clean minimal design.",
-    stack: ["React", "Tailwind"],
+    stack: ["React", "Tailwind", "Next.js"],
     accent: "oklch(0.7 0.25 290)",
     accent2: "oklch(0.75 0.2 330)",
-    pdfFile: undefined as string | undefined,
-    githubUrl: undefined as string | undefined,
-    viewUrl: undefined as string | undefined,
+    pdfFile: portfolio01Pdf,
+    githubUrl: "https://github.com/hairilikhsan17/portofolio.git",
+    viewUrl: portfolio01Pdf,
   },
   {
     title: "Sistem Prediksi Kegiatan PLN Galesong",
@@ -78,16 +81,16 @@ const projects = [
     viewUrl: undefined as string | undefined,
   },
   {
-    title: "Portfolio V2",
+    title: "Portfolio 02",
     cat: "UI/UX",
     isNew: true,
     desc: "Premium animated portfolio with glassmorphism and motion design.",
-    stack: ["React", "Framer Motion"],
+    stack: ["React", "Framer Motion", "TanStack Start", "Vite", "Tailwind"],
     accent: "oklch(0.7 0.25 290)",
     accent2: "oklch(0.75 0.2 230)",
-    pdfFile: undefined as string | undefined,
-    githubUrl: undefined as string | undefined,
-    viewUrl: undefined as string | undefined,
+    pdfFile: portfolio02Pdf,
+    githubUrl: "https://github.com/hairilikhsan17/Portofolio-V2.git",
+    viewUrl: portfolio02Pdf,
   },
   {
     title: "Dicoding UNDIPA",
@@ -112,6 +115,18 @@ const projects = [
     pdfFile: absensiMagangPdf,
     githubUrl: "https://github.com/hairilikhsan17/absensimahasiswamagang.git",
     viewUrl: absensiMagangPdf,
+  },
+  {
+    title: "Kebiasaan Cerdas (May Habit)",
+    cat: "Web App",
+    isNew: true,
+    desc: "Aplikasi kebiasaan cerdas berbasis web untuk membantu pengguna membangun, melacak, dan mempertahankan kebiasaan positif secara konsisten.",
+    stack: ["Supabase", "TanStack Start", "Vite", "Cloudflare", "React", "Tailwind"],
+    accent: "oklch(0.7 0.22 150)",
+    accent2: "oklch(0.75 0.2 180)",
+    pdfFile: kebiasaanCerdasPdf,
+    githubUrl: "https://github.com/hairilikhsan17/kebiasaan-cerdas.git",
+    viewUrl: kebiasaanCerdasPdf,
   },
   {
     title: "Monitoring Keuangan",

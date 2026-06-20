@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { motion, AnimatePresence } from "framer-motion";
-import { Github, Linkedin, Mail, ArrowUp, Instagram, Twitter, MapPin, Phone, Heart, Sparkles, ChevronLeft, ChevronRight } from "lucide-react";
+import { Github, Linkedin, Mail, ArrowUp, Instagram, Twitter, MapPin, Phone, Heart, Sparkles, ChevronLeft, ChevronRight, MessageCircle } from "lucide-react";
 import { useState, useRef } from "react";
 import profile from "../assets/profile.png";
 
@@ -88,11 +88,11 @@ function ParticleBurst({
 }
 
 const socials = [
-  { Icon: Github,    label: "GitHub",    color: "#ffffff" },
-  { Icon: Linkedin,  label: "LinkedIn",  color: "#0A66C2" },
-  { Icon: Twitter,   label: "Twitter",   color: "#1DA1F2" },
-  { Icon: Instagram, label: "Instagram", color: "#E4405F" },
-  { Icon: Mail,      label: "Email",     color: "#a855f7" },
+  { Icon: Github,    label: "GitHub",    color: "#ffffff", href: "https://github.com/hairilikhsan17" },
+  { Icon: Linkedin,  label: "LinkedIn",  color: "#0A66C2", href: "https://www.linkedin.com/in/hairil-ikhsan-688709404" },
+  { Icon: Twitter,   label: "Twitter",   color: "#1DA1F2", href: "#" },
+  { Icon: Instagram, label: "Instagram", color: "#E4405F", href: "https://www.instagram.com/hairilikhsan17?igsh=bXBrYmt3cnRvMWt2" },
+  { Icon: Mail,      label: "Email",     color: "#a855f7", href: "mailto:hairilikhsan17@gmail.com" },
 ];
 
 export function Footer() {
@@ -238,10 +238,12 @@ export function Footer() {
 
             {/* Social icons */}
             <div className="flex gap-2 mt-5">
-              {socials.map(({ Icon, label, color }, i) => (
+              {socials.map(({ Icon, label, color, href }, i) => (
                 <ParticleBurst key={label} count={6} radius={24} className="inline-flex">
                   <motion.a
-                    href="#"
+                    href={href}
+                    target={href !== "#" && !href.startsWith("mailto:") ? "_blank" : undefined}
+                    rel={href !== "#" && !href.startsWith("mailto:") ? "noopener noreferrer" : undefined}
                     aria-label={label}
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
@@ -290,15 +292,21 @@ export function Footer() {
             <h4 className="font-semibold mb-4 text-sm uppercase tracking-wider text-gradient">Contact</h4>
             <ul className="space-y-3 text-sm text-muted-foreground">
               {[
-                { Icon: Mail,   text: "hairil@example.com" },
-                { Icon: Phone,  text: "+62 812 3456 7890"  },
-                { Icon: MapPin, text: "Makassar, Indonesia" },
-              ].map(({ Icon, text }) => (
+                { Icon: Mail, text: "hairilikhsan17@gmail.com", href: "mailto:hairilikhsan17@gmail.com" },
+                { Icon: MessageCircle, text: "WhatsApp: +62 813 6212 8807", href: "https://wa.me/6281362128807" },
+                { Icon: MapPin, text: "Makassar, Indonesia", href: "https://maps.google.com/?q=Makassar,Indonesia" },
+              ].map(({ Icon, text, href }) => (
                 <ParticleBurst key={text} count={6} radius={22} as="li" className="flex items-center gap-2">
-                  <motion.span whileHover={{ x: 4 }} className="flex items-center gap-2 w-full">
+                  <motion.a
+                    href={href}
+                    target={href.startsWith("http") ? "_blank" : undefined}
+                    rel={href.startsWith("http") ? "noopener noreferrer" : undefined}
+                    whileHover={{ x: 4 }}
+                    className="flex items-center gap-2 w-full hover:text-foreground transition-all"
+                  >
                     <Icon size={14} className="text-[color:var(--neon)] flex-shrink-0" />
                     {text}
-                  </motion.span>
+                  </motion.a>
                 </ParticleBurst>
               ))}
             </ul>

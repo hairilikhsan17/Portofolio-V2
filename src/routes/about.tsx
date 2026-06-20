@@ -1,4 +1,4 @@
-﻿import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { motion, useMotionValue, useSpring, AnimatePresence } from "framer-motion";
 import { useState, useEffect, useRef } from "react";
 import { Code2, Palette, Cloud, ChevronDown, Github } from "lucide-react";
@@ -949,14 +949,14 @@ const GoogleDevIcon = () => (
 );
 
 const SOCIALS = [
-  { name: "LinkedIn",       Icon: LinkedInIcon  },
-  { name: "GitHub",         Icon: GithubIcon    },
-  { name: "Google Scholar", Icon: ScholarIcon   },
-  { name: "Kaggle",         Icon: KaggleIcon    },
-  { name: "Instagram",      Icon: InstagramIcon },
-  { name: "Medium",         Icon: MediumIcon    },
-  { name: "ORCID",          Icon: OrcidIcon     },
-  { name: "Google Dev",     Icon: GoogleDevIcon },
+  { name: "LinkedIn",       Icon: LinkedInIcon,  href: "https://www.linkedin.com/in/hairil-ikhsan-688709404" },
+  { name: "GitHub",         Icon: GithubIcon,    href: "https://github.com/hairilikhsan17" },
+  { name: "Google Scholar", Icon: ScholarIcon,   href: "#" },
+  { name: "Kaggle",         Icon: KaggleIcon,    href: "#" },
+  { name: "Instagram",      Icon: InstagramIcon, href: "https://www.instagram.com/hairilikhsan17?igsh=bXBrYmt3cnRvMWt2" },
+  { name: "Medium",         Icon: MediumIcon,    href: "#" },
+  { name: "ORCID",          Icon: OrcidIcon,     href: "#" },
+  { name: "Google Dev",     Icon: GoogleDevIcon, href: "#" },
 ];
 
 /* ─── Connect Section ──────────────────────────────────────────── */
@@ -1075,7 +1075,9 @@ function ConnectSection() {
 
             {/* Tombol oval "Lihat profil" */}
             <motion.a
-              href="#"
+              href="https://www.linkedin.com/in/hairil-ikhsan-688709404"
+              target="_blank"
+              rel="noopener noreferrer"
               whileHover={{ background: "rgba(255,255,255,0.1)", scale: 1.03 }}
               whileTap={{ scale: 0.97 }}
               style={{
@@ -1098,8 +1100,10 @@ function ConnectSection() {
       </div>
 
       <div className="grid grid-cols-4 grid-rows-2 gap-3">
-        {SOCIALS.map(({ name, Icon }, i) => (
-          <motion.a key={name} href="#"
+        {SOCIALS.map(({ name, Icon, href }, i) => (
+          <motion.a key={name} href={href}
+            target={href !== "#" ? "_blank" : undefined}
+            rel={href !== "#" ? "noopener noreferrer" : undefined}
             initial={{ opacity: 0, scale: 0.7, y: 20 }}
             whileInView={{ opacity: 1, scale: 1, y: 0 }}
             viewport={{ once: true }}

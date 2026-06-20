@@ -1,13 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { motion, useInView, useMotionValue, useSpring, useTransform, animate } from "framer-motion";
 import { useState, useRef, useEffect } from "react";
-import { Code2, Server, Database, Cloud, Wrench, Palette, Zap, Sparkles, ShieldCheck, Send, Rocket, Heart, Trophy, Brain } from "lucide-react";
+import { Code2, Server, Database, Cloud, Wrench, Palette, Zap, Sparkles, ShieldCheck, Send, Rocket, Heart, Trophy, Brain, Briefcase } from "lucide-react";
 import {
   SiReact, SiNextdotjs, SiTypescript, SiTailwindcss, SiLaravel, SiNodedotjs, SiPython, SiExpress,
   SiMysql, SiPostgresql, SiMongodb, SiDocker, SiFirebase,
   SiGit, SiGithubactions, SiVite, SiPostman, SiFigma, SiFramer, SiVercel, SiGithub,
 } from "react-icons/si";
 import { FaAws, FaDatabase } from "react-icons/fa";
+import { PiMicrosoftExcelLogo, PiMicrosoftPowerpointLogo, PiMicrosoftWordLogo } from "react-icons/pi";
 
 /* ─── CSS keyframe gradient cycling (every 3 s, 6 palettes) ──── */
 const GRADIENT_CYCLE_STYLE = `
@@ -142,6 +143,11 @@ const categories = {
     { name: "Framer Motion", v: 85, Logo: SiFramer, color: "#ffffff" },
     { name: "Design Systems", v: 82, Logo: Sparkles as any, color: "#a855f7" },
   ]},
+  "Microsoft Office": { Icon: Briefcase, items: [
+    { name: "Excel", v: 95, Logo: PiMicrosoftExcelLogo, color: "#107C41" },
+    { name: "PowerPoint", v: 97, Logo: PiMicrosoftPowerpointLogo, color: "#C43E1C" },
+    { name: "Word", v: 100, Logo: PiMicrosoftWordLogo, color: "#2B579A" },
+  ]},
 };
 
 const allTools = [
@@ -161,6 +167,9 @@ const allTools = [
   { name: "Vite", Logo: SiVite, color: "#646CFF" },
   { name: "Vercel", Logo: SiVercel, color: "#ffffff" },
   { name: "Postman", Logo: SiPostman, color: "#FF6C37" },
+  { name: "Excel", Logo: PiMicrosoftExcelLogo, color: "#107C41" },
+  { name: "PowerPoint", Logo: PiMicrosoftPowerpointLogo, color: "#C43E1C" },
+  { name: "Word", Logo: PiMicrosoftWordLogo, color: "#2B579A" },
 ];
 
 // Animated counter — mv is a stable MotionValue object, safe to omit from deps
@@ -227,6 +236,64 @@ function ToolIcon({ tool, idx }: { tool: typeof allTools[0]; idx: number }) {
 
 function SkillsPage() {
   const [active, setActive] = useState<keyof typeof categories>("Frontend");
+
+  // Form states
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  const [description, setDescription] = useState("");
+  const [projectType, setProjectType] = useState("Website");
+  const [timeline, setTimeline] = useState("1 Week");
+
+  // Form submission states
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<"idle" | "success" | "error">("idle");
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!fullName || !email || !description) {
+      alert("Please fill in all fields (Full Name, Email, and Project Description) first.");
+      return;
+    }
+
+    setIsSubmitting(true);
+    setSubmitStatus("idle");
+
+    try {
+      const response = await fetch("https://formsubmit.co/ajax/hairilikhsan17@gmail.com", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        },
+        body: JSON.stringify({
+          Name: fullName,
+          Email: email,
+          Description: description,
+          "Project Type": projectType,
+          Timeline: timeline
+        })
+      });
+
+      const result = await response.json();
+
+      if (response.ok && result.success === "true") {
+        setSubmitStatus("success");
+        // Clear fields on success
+        setFullName("");
+        setEmail("");
+        setDescription("");
+      } else {
+        throw new Error(result.message || "Failed to send message.");
+      }
+    } catch (err: any) {
+      console.error(err);
+      setSubmitStatus("error");
+      setErrorMessage(err.message || "Something went wrong. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <div className="px-4">
@@ -407,46 +474,181 @@ function SkillsPage() {
         <div className="grid lg:grid-cols-2 gap-6">
           <div className="space-y-4">
             {[
-              { t: "🌐 Web Development", d: "Modern marketing sites & web apps." },
-              { t: "📱 Mobile Development", d: "Cross-platform mobile experiences." },
-              { t: "🎨 UI/UX Design", d: "Beautiful, accessible interfaces." },
-              { t: "📊 Dashboard Systems", d: "Data-rich analytics dashboards." },
+              { t: "🌐 Web Development", d: "Modern marketing sites & web apps.", color: "var(--neon)" },
+              { t: "📱 Mobile Development", d: "Cross-platform mobile experiences.", color: "var(--neon-2)" },
+              { t: "🎨 UI/UX Design", d: "Beautiful, accessible interfaces.", color: "#a855f7" },
+              { t: "📊 Dashboard Systems", d: "Data-rich analytics dashboards.", color: "#fbbf24" },
             ].map((s, i) => (
               <motion.div
                 key={s.t}
                 initial={{ opacity: 0, x: -30 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                whileHover={{ x: 8, scale: 1.02 }}
-                className="glass rounded-2xl p-4 hover:glow-sm cursor-pointer"
+                transition={{ delay: i * 0.1, type: "spring", stiffness: 120 }}
+                whileHover={{
+                  y: -5,
+                  x: 5,
+                  scale: 1.02,
+                  boxShadow: `0 10px 30px -10px color-mix(in oklab, ${s.color} 50%, transparent)`,
+                  borderColor: `color-mix(in oklab, ${s.color} 60%, transparent)`,
+                }}
+                className="glass rounded-2xl p-5 cursor-pointer border border-transparent transition-all duration-300 relative overflow-hidden group"
               >
-                <h4 className="font-bold">{s.t}</h4>
-                <p className="text-xs text-muted-foreground mt-1">{s.d}</p>
+                {/* Subtle radial glow inside card on hover */}
+                <div
+                  className="absolute -right-10 -bottom-10 w-24 h-24 rounded-full opacity-0 group-hover:opacity-20 blur-xl transition-opacity duration-500 pointer-events-none"
+                  style={{ background: s.color }}
+                />
+                <h4 className="font-bold text-base flex items-center gap-2 group-hover:text-primary transition-colors duration-300">{s.t}</h4>
+                <p className="text-xs text-muted-foreground mt-2 leading-relaxed">{s.d}</p>
               </motion.div>
             ))}
           </div>
-          <form onSubmit={(e) => e.preventDefault()} className="glass rounded-3xl p-6 space-y-4">
-            <input placeholder="Full Name" className="w-full bg-secondary/60 rounded-xl px-4 py-3 outline-none focus:ring-2 ring-primary text-sm" />
-            <input placeholder="Email" type="email" className="w-full bg-secondary/60 rounded-xl px-4 py-3 outline-none focus:ring-2 ring-primary text-sm" />
-            <textarea placeholder="Project Description" rows={4} className="w-full bg-secondary/60 rounded-xl px-4 py-3 outline-none focus:ring-2 ring-primary text-sm resize-none" />
-            <div>
-              <label className="text-xs text-muted-foreground">Project Type</label>
+          <form
+            onSubmit={handleSubmit}
+            className="glass rounded-3xl p-8 space-y-5 border border-white/5 hover:border-primary/30 transition-all duration-500 relative overflow-hidden group shadow-xl"
+            style={{
+              background: "linear-gradient(135deg, rgba(25, 20, 35, 0.65), rgba(15, 10, 25, 0.75))",
+              backdropFilter: "blur(24px) saturate(140%)",
+            }}
+          >
+            {/* Ambient hover glow inside form */}
+            <div className="absolute -left-20 -top-20 w-44 h-44 rounded-full bg-gradient-to-br from-primary to-accent opacity-0 group-hover:opacity-10 blur-3xl transition-opacity duration-700 pointer-events-none" />
+            <div className="absolute -right-20 -bottom-20 w-44 h-44 rounded-full bg-gradient-to-br from-accent to-neon-2 opacity-0 group-hover:opacity-10 blur-3xl transition-opacity duration-700 pointer-events-none" />
+
+            <div className="space-y-1 relative z-10">
+              <label className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground ml-1">Full Name</label>
+              <input
+                placeholder="e.g. Hairil"
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                required
+                disabled={isSubmitting}
+                className="w-full bg-black/40 border border-white/10 hover:border-white/20 focus:border-primary/50 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-primary/20 text-sm transition-all duration-300 text-foreground placeholder:text-muted-foreground/30 disabled:opacity-50"
+              />
+            </div>
+            
+            <div className="space-y-1 relative z-10">
+              <label className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground ml-1">Email Address</label>
+              <input
+                placeholder="e.g. hairilikhsan11@gmail.com"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                disabled={isSubmitting}
+                className="w-full bg-black/40 border border-white/10 hover:border-white/20 focus:border-primary/50 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-primary/20 text-sm transition-all duration-300 text-foreground placeholder:text-muted-foreground/30 disabled:opacity-50"
+              />
+            </div>
+
+            <div className="space-y-1 relative z-10">
+              <label className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground ml-1">Project Description</label>
+              <textarea
+                placeholder="Describe your project, features, goals..."
+                rows={4}
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                required
+                disabled={isSubmitting}
+                className="w-full bg-black/40 border border-white/10 hover:border-white/20 focus:border-primary/50 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-primary/20 text-sm resize-none transition-all duration-300 text-foreground placeholder:text-muted-foreground/30 disabled:opacity-50"
+              />
+            </div>
+
+            <div className="relative z-10">
+              <label className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground ml-1">Project Type</label>
               <div className="flex flex-wrap gap-2 mt-2">
-                {["Website", "Dashboard", "Mobile App", "UI/UX"].map((t) => (
-                  <button key={t} type="button" className="pill hover:glow-sm">{t}</button>
-                ))}
+                {["Website", "Dashboard", "Mobile App", "UI/UX"].map((t) => {
+                  const isSelected = projectType === t;
+                  return (
+                    <button
+                      key={t}
+                      type="button"
+                      disabled={isSubmitting}
+                      onClick={() => setProjectType(t)}
+                      className={`pill transition-all duration-300 cursor-pointer ${
+                        isSelected
+                          ? "!bg-gradient-to-r from-primary to-accent border-transparent text-white font-semibold shadow-[0_4px_12px_rgba(168,85,247,0.35)]"
+                          : "hover:glow-sm text-muted-foreground"
+                      }`}
+                    >
+                      {t}
+                    </button>
+                  );
+                })}
               </div>
             </div>
-            <div>
-              <label className="text-xs text-muted-foreground">Timeline</label>
+
+            <div className="relative z-10">
+              <label className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground ml-1">Timeline</label>
               <div className="flex flex-wrap gap-2 mt-2">
-                {["1 Week", "2 Weeks", "1 Month", "Flexible"].map((t) => (
-                  <button key={t} type="button" className="pill hover:glow-sm">{t}</button>
-                ))}
+                {["1 Week", "2 Weeks", "1 Month", "Flexible"].map((t) => {
+                  const isSelected = timeline === t;
+                  return (
+                    <button
+                      key={t}
+                      type="button"
+                      disabled={isSubmitting}
+                      onClick={() => setTimeline(t)}
+                      className={`pill transition-all duration-300 cursor-pointer ${
+                        isSelected
+                          ? "!bg-gradient-to-r from-primary to-accent border-transparent text-white font-semibold shadow-[0_4px_12px_rgba(168,85,247,0.35)]"
+                          : "hover:glow-sm text-muted-foreground"
+                      }`}
+                    >
+                      {t}
+                    </button>
+                  );
+                })}
               </div>
             </div>
-            <button className="btn-primary w-full" style={{ display: "flex", justifyContent: "center" }}>Let's Build Together <Send size={14} /></button>
+
+            {submitStatus === "success" && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="p-4 rounded-xl text-xs border bg-emerald-500/10 border-emerald-500/30 text-emerald-400 relative z-10"
+              >
+                🎉 <strong>Success!</strong> Your message has been sent. Please check your inbox (<strong>hairilikhsan17@gmail.com</strong>) for a verification link if this is the first submission.
+              </motion.div>
+            )}
+
+            {submitStatus === "error" && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="p-4 rounded-xl text-xs border bg-rose-500/10 border-rose-500/30 text-rose-400 relative z-10"
+              >
+                ⚠️ <strong>Error:</strong> {errorMessage}
+              </motion.div>
+            )}
+
+            <motion.button
+              type="submit"
+              disabled={isSubmitting}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="btn-primary w-full justify-center cursor-pointer transition-all duration-300 relative overflow-hidden disabled:opacity-50 disabled:cursor-not-allowed relative z-10"
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                background: "linear-gradient(120deg, var(--neon), var(--neon-2))",
+                boxShadow: "0 4px 20px -4px color-mix(in oklab, var(--neon) 60%, transparent)",
+              }}
+            >
+              {isSubmitting ? (
+                <span className="flex items-center gap-2">
+                  <svg className="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                  </svg>
+                  Sending Message...
+                </span>
+              ) : (
+                <span className="flex items-center gap-2">
+                  Let's Build Together <Send size={14} />
+                </span>
+              )}
+            </motion.button>
           </form>
         </div>
       </Section>
