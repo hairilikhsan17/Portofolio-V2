@@ -3,8 +3,15 @@ import "./lib/error-capture";
 import { consumeLastCapturedError } from "./lib/error-capture";
 import { renderErrorPage } from "./lib/error-page";
 
+// Nitro (used for Vercel and Node.js deployments) imports the server entry as a
+// module that exports a fetch handler.  The signature is the standard Web Fetch API
+// — no Cloudflare-specific `env` or `ctx` arguments.
+type FetchHandler = (request: Request) => Promise<Response> | Response;
+
 type ServerEntry = {
-  fetch: (request: Request, env: unknown, ctx: unknown) => Promise<Response> | Response;
+  // Cloudflare Workers shape (env + ctx) — kept for local Wrangler compat
+  fetch: (request: Request, env?: unknown, ctx?: unknown) => Promise<Response> | Response;
+  default?: FetchHandler;
 };
 
 let serverEntryPromise: Promise<ServerEntry> | undefined;
@@ -66,8 +73,11 @@ async function normalizeCatastrophicSsrResponse(response: Response): Promise<Res
   return brandedErrorResponse();
 }
 
+// Universal fetch handler — works on Vercel (Nitro/Node.js) and Cloudflare Workers.
+// When running under Nitro, `env` and `ctx` are undefined; the handler still works
+// because TanStack Start's server-entry only needs the Request.
 export default {
-  async fetch(request: Request, env: unknown, ctx: unknown) {
+  async fetch(request: Request, env?: unknown, ctx?: unknown) {
     try {
       const handler = await getServerEntry();
       const response = await handler.fetch(request, env, ctx);
