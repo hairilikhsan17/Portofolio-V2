@@ -821,7 +821,7 @@ function ProfileCard() {
     y.set(((e.clientX - rect.left) / rect.width - 0.5) * -14);
   };
 
-  const tags = ["Makassar, Indonesia", "Universitas Dipa Makassar", "3+ Tahun Pengalaman", "10+ Sertifikasi", "100+ Proyek"];
+  const tags = ["Makassar, Indonesia", "S.Kom – Sistem Informasi, Universitas Dipa Makassar", "3+ Tahun Pengalaman", "7+ Sertifikasi", "15+ Proyek"];
 
   return (
     <motion.div
@@ -938,35 +938,65 @@ function ProfileCard() {
             viewport={{ once: true }}
             transition={{ delay: 0.2 }}
           >
-            Programmer & Full Stack Developer dari <span className="text-primary font-medium">Makassar, Sulawesi Selatan</span>
+            <strong>Programmer & Full Stack Developer</strong> |{" "}
+            <strong>HSE / K3 Enthusiast</strong>{" "}
+            <motion.span
+              style={{
+                background: "linear-gradient(120deg, #a78bfa 0%, #818cf8 50%, #c4b5fd 100%)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                backgroundClip: "text",
+                fontWeight: 600,
+              }}
+              animate={{ opacity: [0.8, 1, 0.8] }}
+              transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+            >
+              Makassar, Sulawesi Selatan
+            </motion.span>
           </motion.p>
 
           <div className="space-y-3 text-sm text-muted-foreground leading-relaxed">
             {[
               <>
-                Saya adalah seorang <span className="text-foreground font-medium">programmer</span> dan{" "}
-                <span className="text-foreground font-medium">Full Stack Developer</span> yang berasal dari{" "}
-                <span className="text-foreground font-medium">Makassar, Sulawesi Selatan</span>, Indonesia.
-                Saat ini saya sedang menempuh pendidikan di{" "}
-                <span className="text-foreground font-medium">Universitas Dipa Makassar</span> dan aktif sebagai anggota{" "}
-                <span className="text-foreground font-medium">Diponegara Computer Club (DCC)</span>, sebuah komunitas IT terbesar di kampus saya.
+                Saya adalah seorang <strong className="text-foreground">Full Stack Developer</strong> yang berasal dari{" "}
+                <motion.span
+                  style={{
+                    background: "linear-gradient(120deg, #a78bfa, #818cf8, #c4b5fd)",
+                    WebkitBackgroundClip: "text",
+                    WebkitTextFillColor: "transparent",
+                    backgroundClip: "text",
+                    fontWeight: 600,
+                  }}
+                >
+                  Makassar, Sulawesi Selatan
+                </motion.span>
+                , Indonesia. Saya telah menyelesaikan pendidikan di{" "}
+                <strong className="text-foreground">Universitas Dipa Makassar</strong> dengan gelar{" "}
+                <strong className="text-foreground">S.Kom</strong> pada jurusan{" "}
+                <strong className="text-foreground">Sistem Informasi</strong>.
               </>,
               <>
-                Dengan pengalaman lebih dari <span className="text-foreground font-medium">3 tahun</span> di dunia pemrograman,
-                saya telah menyelesaikan <span className="text-foreground font-medium">30+ proyek</span> dan meraih{" "}
-                <span className="text-foreground font-medium">10+ sertifikasi</span> profesional. Keahlian utama saya meliputi{" "}
-                <span className="text-foreground font-medium">Full-Stack Web Development</span> (React, TypeScript, Next.js, Node.js, Laravel),{" "}
-                <span className="text-foreground font-medium">Cloud Computing</span>,{" "}
-                <span className="text-foreground font-medium">UI/UX Design</span>,{" "}
-                <span className="text-foreground font-medium">Data Engineering</span>, dan{" "}
-                <span className="text-foreground font-medium">Computer Networking</span>.
+                Di bidang teknologi, saya memiliki pengalaman lebih dari{" "}
+                <strong className="text-foreground">3 tahun</strong> dalam pengembangan aplikasi web dan sistem, dengan fokus pada{" "}
+                <strong className="text-foreground">Full-Stack Development</strong> seperti{" "}
+                <strong className="text-foreground">React, TypeScript, Next.js, Node.js</strong>, dan{" "}
+                <strong className="text-foreground">Laravel</strong>. Selain pengembangan sistem, saya juga memiliki kemampuan di bidang{" "}
+                <strong className="text-foreground">UI/UX Design</strong> serta penguasaan{" "}
+                <strong className="text-foreground">Microsoft Office</strong> yang mendukung pekerjaan saya dalam pembuatan dokumentasi, analisis data, dan presentasi.
               </>,
               <>
-                Saya percaya bahwa teknologi adalah alat terbaik untuk memecahkan masalah nyata. Setiap proyek yang saya kerjakan selalu
-                mengutamakan <span className="text-foreground font-medium">kualitas kode</span>,{" "}
-                <span className="text-foreground font-medium">performa</span>, dan{" "}
-                <span className="text-foreground font-medium">pengalaman pengguna</span> yang luar biasa. Saya berkomitmen untuk terus
-                belajar dan berkontribusi di ekosistem teknologi Indonesia.
+                Di sisi lain, saya memiliki latar belakang di bidang{" "}
+                <strong className="text-foreground">Keselamatan dan Kesehatan Kerja (K3)</strong>. Saya telah mengikuti pelatihan{" "}
+                <strong className="text-foreground">Ahli K3 Umum</strong> dari{" "}
+                <strong className="text-foreground">Kementerian Ketenagakerjaan RI</strong> dan memiliki ketertarikan untuk bekerja sebagai{" "}
+                <strong className="text-foreground">HSE / Safety Officer</strong>. Pengalaman ini membentuk cara berpikir saya yang lebih disiplin, sistematis, dan peduli terhadap keselamatan kerja.
+              </>,
+              <>
+                Saya memiliki lebih dari <strong className="text-foreground">7 sertifikasi profesional</strong> dan telah menyelesaikan{" "}
+                <strong className="text-foreground">15+ proyek</strong> di bidang pengembangan sistem. Saya percaya bahwa kombinasi antara{" "}
+                <strong className="text-foreground">teknologi</strong>,{" "}
+                <strong className="text-foreground">desain</strong>, dan{" "}
+                <strong className="text-foreground">keselamatan kerja</strong> dapat menciptakan sistem yang efisien, aman, dan berkelanjutan.
               </>,
             ].map((para, i) => (
               <motion.p
@@ -997,8 +1027,18 @@ function ProfileCard() {
                   background: "linear-gradient(120deg, rgba(139,92,246,0.3), rgba(96,165,250,0.3))",
                   borderColor: "rgba(139,92,246,0.8)",
                 }}
+                style={
+                  i === 0
+                    ? {
+                        background: "linear-gradient(120deg, rgba(167,139,250,0.25), rgba(129,140,248,0.25))",
+                        borderColor: "rgba(167,139,250,0.7)",
+                        color: "#c4b5fd",
+                        fontWeight: 600,
+                      }
+                    : {}
+                }
               >
-                {t}
+                {i === 0 ? "📍 " : ""}{t}
               </motion.span>
             ))}
           </div>
@@ -1362,7 +1402,7 @@ function AboutPage() {
 
         {/* ── 2. Profile / Tentang Saya ── */}
         <motion.div variants={sectionVariant}>
-          <Section badge="Tentang Saya" title="Hairil Ikhsan" subtitle="Programmer & Full Stack Developer dari Makassar, Sulawesi Selatan">
+          <Section badge="Tentang Saya" title="Hairil Ikhsan" subtitle="Programmer & Full Stack Developer | HSE / K3 Enthusiast — Makassar, Sulawesi Selatan">
             <ProfileCard />
           </Section>
         </motion.div>
