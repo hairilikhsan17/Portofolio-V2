@@ -582,10 +582,10 @@ function StatButton({ label, value, color, href }: {
         style={{
           background: hovered
             ? `linear-gradient(135deg, ${color}25, ${color}15)`
-            : "rgba(255,255,255,0.04)",
+            : "color-mix(in oklab, var(--card) 80%, transparent)",
           border: hovered
             ? `1px solid ${color}70`
-            : "1px solid rgba(255,255,255,0.1)",
+            : "1px solid color-mix(in oklab, var(--border) 80%, transparent)",
           boxShadow: hovered
             ? `0 0 0 1px ${color}30, 0 8px 28px -6px ${color}60`
             : "none",
@@ -615,9 +615,10 @@ function StatButton({ label, value, color, href }: {
         <motion.p
           className="text-sm font-bold m-0 mt-0.5 relative z-10"
           animate={hovered
-            ? { color: [color, "#ffffff", color] }
-            : { color: "#ffffff" }
+            ? { color: [color, color, color] }
+            : {}
           }
+          style={{ color: "var(--foreground)" }}
           transition={{ duration: 1.2, repeat: hovered ? Infinity : 0 }}
         >
           {value}
@@ -695,9 +696,10 @@ function LearnMoreButton() {
           <motion.span
             className="relative z-10 flex items-center gap-2"
             animate={lmHovered
-              ? { color: ["#ffffff", "#a78bfa", "#60a5fa", "#22d3ee", "#ffffff"] }
-              : { color: "#ffffff" }
+              ? { color: ["var(--foreground)", "#a78bfa", "#60a5fa", "#22d3ee", "var(--foreground)"] }
+              : {}
             }
+            style={{ color: "var(--foreground)" }}
             transition={{ duration: 1.6, repeat: lmHovered ? Infinity : 0 }}
           >
             Learn More About Me

@@ -230,7 +230,7 @@ function Calendar({ data, isMobile }: { data: Activity[]; isMobile: boolean }) {
           return (
             <div key={i} style={{
               width, minWidth: width, flexShrink: 0,
-              fontSize: 11, color: "rgba(139,148,158,0.9)",
+              fontSize: 11, color: "var(--muted-foreground)",
             }}>
               {MONTHS[ml.month]}
             </div>
@@ -246,7 +246,7 @@ function Calendar({ data, isMobile }: { data: Activity[]; isMobile: boolean }) {
           {DAY_LABELS.map((d, i) => (
             <div key={i} style={{
               height: CELL + GAP, fontSize: 10,
-              color: "rgba(139,148,158,0.9)",
+              color: "var(--muted-foreground)",
               display: "flex", alignItems: "center", justifyContent: "flex-end",
               paddingRight: 6,
             }}>
@@ -267,7 +267,7 @@ function Calendar({ data, isMobile }: { data: Activity[]; isMobile: boolean }) {
                   <div key={di} style={{
                     width: CELL, height: CELL, flexShrink: 0,
                     borderRadius: 2,
-                    background: cell ? COLORS[cell.level] : "rgba(22,27,34,0.6)",
+                    background: cell ? COLORS[cell.level] : "color-mix(in oklab, var(--border, rgba(22,27,34,0.6)) 60%, transparent)",
                     cursor: cell ? "pointer" : "default",
                   }}
                     onMouseEnter={cell ? (e) => handleEnter(e, cell) : undefined}
@@ -348,8 +348,8 @@ export function GithubContributions() {
       onHoverEnd={() => setHovered(false)}
       whileHover={{ scale: 1.01, y: -4 }}
       style={{
-        background:     "rgba(13,17,23,0.92)",
-        border:         "1px solid rgba(48,54,61,0.8)",
+        background:     "var(--card, rgba(13,17,23,0.92))",
+        border:         "1px solid color-mix(in oklab, var(--border, rgba(48,54,61,0.8)) 100%, transparent)",
         backdropFilter: "blur(12px)",
         borderRadius:   isMobile ? 16 : 24,
         padding:        isMobile ? "16px 14px" : "24px 28px",
@@ -401,13 +401,13 @@ export function GithubContributions() {
       }}>
         <h2 style={{ fontSize: isMobile ? 14 : 18, fontWeight: 600, margin: 0, lineHeight: 1.4 }}>
           {loading
-            ? <span style={{ color: "rgba(139,148,158,0.8)" }}>Loading contributions…</span>
+            ? <span style={{ color: "var(--muted-foreground)" }}>Loading contributions…</span>
             : error
-            ? <span style={{ color: "white" }}>GitHub Contributions</span>
+            ? <span style={{ color: "var(--foreground)" }}>GitHub Contributions</span>
             : (
               <>
                 <CyclingText text={`${total!.toLocaleString()}`} />
-                <span style={{ color: "white" }}> contributions in the last year</span>
+                <span style={{ color: "var(--foreground)" }}> contributions in the last year</span>
               </>
             )}
         </h2>
@@ -417,7 +417,7 @@ export function GithubContributions() {
           rel="noopener noreferrer"
           style={{
             display: "flex", alignItems: "center", gap: 4,
-            color: "rgba(139,148,158,1)", fontSize: isMobile ? 11 : 13,
+            color: "var(--muted-foreground)", fontSize: isMobile ? 11 : 13,
             textDecoration: "none", position: "relative", zIndex: 1,
             whiteSpace: "nowrap",
           }}
@@ -428,8 +428,8 @@ export function GithubContributions() {
 
       {/* Calendar box */}
       <div style={{
-        border:       "1px solid rgba(48,54,61,0.7)",
-        background:   "rgba(9,14,20,0.45)",
+        border:       "1px solid color-mix(in oklab, var(--border, rgba(48,54,61,0.7)) 100%, transparent)",
+        background:   "color-mix(in oklab, var(--card, rgba(9,14,20,0.45)) 60%, transparent)",
         borderRadius: isMobile ? 12 : 16,
         padding:      isMobile ? "12px 10px 10px" : "16px 16px 12px",
         position:     "relative",
@@ -455,15 +455,15 @@ export function GithubContributions() {
             gap:            isMobile ? 8 : 0,
             marginTop:      12,
             fontSize:       isMobile ? 11 : 12,
-            color:          "rgba(139,148,158,1)",
+            color:          "var(--muted-foreground)",
           }}>
             <a
               href="https://docs.github.com/articles/why-are-my-contributions-not-showing-up-on-my-profile"
               target="_blank"
               rel="noopener noreferrer"
-              style={{ color: "rgba(139,148,158,0.8)", textDecoration: "none" }}
-              onMouseEnter={e => (e.currentTarget.style.color = "white")}
-              onMouseLeave={e => (e.currentTarget.style.color = "rgba(139,148,158,0.8)")}
+              style={{ color: "var(--muted-foreground)", textDecoration: "none" }}
+              onMouseEnter={e => (e.currentTarget.style.color = "var(--foreground)")}
+              onMouseLeave={e => (e.currentTarget.style.color = "var(--muted-foreground)")}
             >
               Learn how we count contributions
             </a>

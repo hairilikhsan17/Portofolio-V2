@@ -742,8 +742,8 @@ function StatButtonAbout({ label, value, color, href }: {
         whileTap={{ scale: 0.93 }}
         className="relative z-10 px-4 py-3 rounded-xl text-left cursor-pointer overflow-hidden"
         style={{
-          background: hovered ? `linear-gradient(135deg, ${color}25, ${color}15)` : "rgba(255,255,255,0.04)",
-          border: hovered ? `1px solid ${color}70` : "1px solid rgba(255,255,255,0.1)",
+          background: hovered ? `linear-gradient(135deg, ${color}25, ${color}15)` : "color-mix(in oklab, var(--card) 80%, transparent)",
+          border: hovered ? `1px solid ${color}70` : "1px solid color-mix(in oklab, var(--border) 80%, transparent)",
           boxShadow: hovered ? `0 0 0 1px ${color}30, 0 8px 28px -6px ${color}60` : "none",
           transition: "background 0.25s ease, border 0.25s ease, box-shadow 0.25s ease",
           minWidth: 0,
@@ -769,8 +769,9 @@ function StatButtonAbout({ label, value, color, href }: {
         <p className="text-xs text-muted-foreground m-0 relative z-10">{label}</p>
         <motion.p
           className="text-sm font-bold m-0 mt-0.5 relative z-10"
-          animate={hovered ? { color: [color, "#ffffff", color] } : { color: "#ffffff" }}
+          animate={hovered ? { color: [color, color, color] } : {}}
           transition={{ duration: 1.2, repeat: hovered ? Infinity : 0 }}
+          style={{ color: "var(--foreground)" }}
         >
           {value}
         </motion.p>

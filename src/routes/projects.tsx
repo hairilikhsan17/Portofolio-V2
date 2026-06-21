@@ -207,14 +207,33 @@ function ProjectCard({
           : "color-mix(in oklab, var(--card) 55%, transparent)",
         backdropFilter: "blur(16px) saturate(140%)",
         border: hovered
-          ? `1px solid color-mix(in oklab, ${p.accent} 55%, transparent)`
+          ? `1.5px solid color-mix(in oklab, ${p.accent} 75%, transparent)`
           : "1px solid color-mix(in oklab, var(--neon) 22%, transparent)",
         boxShadow: hovered
-          ? `0 0 0 1px color-mix(in oklab,${p.accent} 35%,transparent), 0 16px 50px -10px color-mix(in oklab,${p.accent} 55%,transparent)`
+          ? `0 0 0 1px color-mix(in oklab,${p.accent} 40%,transparent), 0 0 18px 2px color-mix(in oklab,${p.accent} 45%,transparent), 0 0 40px 6px color-mix(in oklab,${p.accent} 20%,transparent), 0 16px 50px -10px color-mix(in oklab,${p.accent} 55%,transparent)`
           : "none",
         transition: "background 0.35s ease, border 0.35s ease, box-shadow 0.35s ease",
       }}
     >
+      {/* ── Permanent top accent border ── */}
+      <motion.div
+        className="absolute top-0 left-0 right-0 pointer-events-none"
+        style={{
+          height: 4,
+          borderRadius: "24px 24px 0 0",
+          background: `linear-gradient(90deg, ${p.accent}, ${p.accent2}, ${p.accent})`,
+          backgroundSize: "200% 100%",
+          zIndex: 10,
+        }}
+        animate={{
+          backgroundPosition: hovered ? ["0% 50%", "100% 50%", "0% 50%"] : "0% 50%",
+          boxShadow: hovered
+            ? `0 0 14px 3px color-mix(in oklab, ${p.accent} 70%, transparent), 0 0 28px 6px color-mix(in oklab, ${p.accent2} 40%, transparent)`
+            : `0 0 8px 2px color-mix(in oklab, ${p.accent} 45%, transparent)`,
+        }}
+        transition={{ backgroundPosition: { duration: 2, repeat: Infinity, ease: "linear" }, boxShadow: { duration: 0.35 } }}
+      />
+
       {/* Radial glow overlay on hover */}
       <AnimatePresence>
         {hovered && (
