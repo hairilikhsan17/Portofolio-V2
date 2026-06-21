@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { motion, AnimatePresence, useInView, useMotionValue, useSpring, type Variants } from "framer-motion";
 import { useState, useRef, useEffect } from "react";
 import { Award, X, ExternalLink, Download, ChevronLeft, ChevronRight, BadgeCheck, Copy, Check, CalendarDays } from "lucide-react";
+import { PdfThumbnail } from "../components/PdfThumbnail";
 import revouSoftwarePdf from "../assets/Sertifikat/Sofware Engginaring Revou mini.pdf";
 import revouDataAnalysisPdf from "../assets/Sertifikat/Revou mini data analis.pdf";
 import intensiveCampPdf from "../assets/Sertifikat/Sertifikat Intensive Camp - Hairil Ikhsan.pdf";
@@ -203,12 +204,7 @@ function CredentialsSlider({ onOpen }: { onOpen: (c: typeof certs[number]) => vo
               style={{ background: "linear-gradient(135deg, var(--neon), var(--neon-2))" }}
             >
               {cert.pdfFile ? (
-                <iframe
-                  src={`${cert.pdfFile}#toolbar=0&navpanes=0&scrollbar=0&view=FitH`}
-                  className="w-full h-full rounded-2xl pointer-events-none"
-                  title={cert.title}
-                  style={{ border: "none", background: "white" }}
-                />
+                <PdfThumbnail src={cert.pdfFile} className="w-full h-full" renderWidth={900} />
               ) : (
                 <>
                   {/* shimmer */}
@@ -347,13 +343,8 @@ function CertCard({ c, onClick, i }: { c: typeof certs[number]; onClick: () => v
         }}
       >
         {c.pdfFile ? (
-          /* PDF preview — rendered via iframe like Google Drive */
-          <iframe
-            src={`${c.pdfFile}#toolbar=0&navpanes=0&scrollbar=0&view=FitH`}
-            className="w-full h-full rounded-2xl pointer-events-none"
-            title={c.title}
-            style={{ border: "none", background: "white" }}
-          />
+          /* PDF thumbnail — canvas-based, works on all devices including mobile */
+          <PdfThumbnail src={c.pdfFile} className="w-full h-full" />
         ) : (
           <>
             <motion.div
@@ -1087,13 +1078,8 @@ function CertificatesPage() {
                       style={{ background: "linear-gradient(135deg, var(--neon), var(--neon-2))" }}
                     >
                       {open.pdfFile ? (
-                        /* PDF rendered inline — like Google Drive viewer */
-                        <iframe
-                          src={`${open.pdfFile}#toolbar=0&navpanes=0&scrollbar=0&view=FitH`}
-                          className="w-full h-full rounded-2xl"
-                          title={open.title}
-                          style={{ border: "none", background: "white", minHeight: 280 }}
-                        />
+                        /* PDF thumbnail — canvas-based, works on all devices including mobile */
+                        <PdfThumbnail src={open.pdfFile} className="w-full h-full" renderWidth={900} />
                       ) : (
                         <>
                           <motion.div

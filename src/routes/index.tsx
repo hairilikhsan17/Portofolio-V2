@@ -9,6 +9,7 @@ import {
 } from "react-icons/si";
 import { FaAws } from "react-icons/fa";
 import { GithubContributions } from "../components/GithubContributions";
+import { PdfThumbnail } from "../components/PdfThumbnail";
 import { useIsMobile } from "../hooks/use-mobile";
 import profile from "../assets/profile.png";
 import portfolio02Pdf from "../assets/Projek/PORTFOLIO 02.pdf";
@@ -412,12 +413,7 @@ function FeaturedProjectCard({ p, i }: { p: typeof featured[number]; i: number }
         }}
       >
         {p.pdfFile ? (
-          <iframe
-            src={`${p.pdfFile}#toolbar=0&navpanes=0&scrollbar=1&view=FitH`}
-            className="w-full rounded-2xl"
-            title={p.title}
-            style={{ border: "none", background: "white", height: "100%", minHeight: 220 }}
-          />
+          <PdfThumbnail src={p.pdfFile} className="w-full h-full" renderWidth={900} />
         ) : (
           <>
             {/* Shimmer */}

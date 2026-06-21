@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { motion, AnimatePresence, type Variants } from "framer-motion";
 import { useState, useRef } from "react";
 import { Search, X, ExternalLink, Github, ArrowUpRight } from "lucide-react";
+import { PdfThumbnail } from "../components/PdfThumbnail";
 import plnGalesongPdf from "../assets/Projek/APLIKASI PLN GALESONG.pdf";
 import sistemPenilaianPdf from "../assets/Projek/Sistem Penilaian Akademik.pdf";
 import absensiMagangPdf from "../assets/Projek/Aplikasi absensi mahasiswa magang.pdf";
@@ -251,13 +252,8 @@ function ProjectCard({
         }}
       >
         {p.pdfFile ? (
-          /* PDF preview rendered via iframe */
-          <iframe
-            src={`${p.pdfFile}#toolbar=0&navpanes=0&scrollbar=0&view=FitH`}
-            className="w-full h-full rounded-2xl pointer-events-none"
-            title={p.title}
-            style={{ border: "none", background: "white" }}
-          />
+          /* PDF thumbnail — canvas-based, works on all devices including mobile */
+          <PdfThumbnail src={p.pdfFile} className="w-full h-full" />
         ) : (
           <>
             {/* Shimmer on hover */}
@@ -667,12 +663,7 @@ function ProjectsPage() {
                 }}
               >
                 {open.pdfFile ? (
-                  <iframe
-                    src={`${open.pdfFile}#toolbar=0&navpanes=0&scrollbar=0&view=FitH`}
-                    className="w-full h-full rounded-2xl"
-                    title={open.title}
-                    style={{ border: "none", background: "white", minHeight: 240 }}
-                  />
+                  <PdfThumbnail src={open.pdfFile} className="w-full h-full" renderWidth={900} />
                 ) : (
                   <>
                     <motion.div
